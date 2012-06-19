@@ -43,7 +43,7 @@ endif
 
 # Enables the use of FPU on Cortex-M4.
 ifeq ($(USE_FPU),)
-  USE_FPU = no
+  USE_FPU = yes
 endif
 
 #
@@ -83,11 +83,13 @@ CSRC = $(PORTSRC) \
        $(BOARDSRC) \
        ${CHIBIOS}/os/various/chprintf.c \
        ${CHIBIOS}/os/various/shell.c \
+       ${CHIBIOS}/os/various/syscalls.c \
        $(SENSORSRC) \
        $(FATFSSRC) \
        src/fsInit.c \
        src/plutoInit.c \
        src/shellCommands.c \
+       src/floatingPoint.c \
        src/main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -123,7 +125,7 @@ INCDIR = $(PORTINC) $(KERNINC) \
          ${CHIBIOS}/os/various \
          $(FATFSINC) \
          src/
-
+         
 #
 # Project, sources and paths
 ##############################################################################
@@ -182,7 +184,7 @@ DINCDIR =
 DLIBDIR =
 
 # List all default libraries here
-DLIBS =
+DLIBS = -lm
 
 #
 # End of default section

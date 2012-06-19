@@ -4,6 +4,7 @@
  *This file contains all the shell commands and shell
  *structures required to start the PLUTO shell.
  */
+/* 18-06-2012 - Riya Ray - The functions fpuTest and cmd_fputest have been added */
 
 #include "plutoconf.h"
 
@@ -16,6 +17,12 @@
 extern const ShellCommand commands[] ;
 
 extern const ShellConfig shell_cfg1 ;
+
+#if CORTEX_USE_FPU
+float fpuTest(BaseSequentialStream *bss, char *operand1, char oper, char *operand2);
+
+void cmd_fputest(BaseSequentialStream *bss, int argc, char *argv[]);
+#endif	/*CORTEX_USE_FPU */
 
 void cmd_mem(BaseSequentialStream *bss, int argc, char *argv[]);
 

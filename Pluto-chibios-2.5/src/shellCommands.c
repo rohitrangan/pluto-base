@@ -4,6 +4,7 @@
  *This file contains all the shell commands and shell
  *structures required to start the PLUTO shell.
  */
+/* 18-06-2012 - Riya Ray - The functions fpuTest and cmd_fputest have been added */
 
 #include <string.h>
 #include "plutoconf.h"
@@ -21,6 +22,9 @@
 const ShellCommand commands[] = {
   {"mem", cmd_mem},
   {"threads", cmd_threads},
+#if CORTEX_USE_FPU
+  {"fputest", cmd_fputest},
+#endif   /* CORTEX_USE_FPU */
 #if PLUTO_USE_FATFS
   {"mount", cmd_mount},
   {"unmount", cmd_unmount},
@@ -37,6 +41,26 @@ const ShellConfig shell_cfg1 = {
   (BaseSequentialStream *)&SD1,
   commands
 };
+
+#if CORTEX_USE_FPU
+void cmd_fputest(BaseSequentialStream *bss, int argc, char *argv[]) {
+  float ans = 0.0;
+  if (argc >3) {
+    chprintf(bss, "Wrong input given! Please enter a float, an operator and/or another float or type 'help'\r\n");
+	return;
+  }
+  if(!strcmp(argv[0],"help" )){
+	chprintf(bss, "The following operators are valid -\r\n");
+	chprintf(bss, "Arithmetic operations - Addition: '+', Subtraction: '-', Multiplication: '*', Division: '/'\r\n");
+	chprintf(bss, "Trigonometric operations - Sin: 's', Cos: 'c', Tan: 't'\r\n");
+	chprintf(bss, "Other operations - Power: 'p', Log: 'l', Square root: 'r'\r\n");
+  }
+  else{
+	ans = fpuTest(bss, argv[0],argv[1][0],argv[2]);
+	chprintf(bss, "The answer is %f\r\n", ans);
+  }
+}
+#endif   /*CORTEX_USE_FPU  */
 
 void cmd_mem(BaseSequentialStream *bss, int argc, char *argv[]) {
   size_t n, size;
