@@ -57,7 +57,7 @@ bool_t mmc_write(void *instance, uint32_t startblk,
 /**
  * @brief   Virtual methods table.
  */
-static const struct MMCSDBlockDeviceVMT mmc_vmt = {
+static const struct MMCDriverVMT mmc_vmt = {
   (bool_t (*)(void *))mmc_lld_is_card_inserted,
   (bool_t (*)(void *))mmc_lld_is_write_protected,
   (bool_t (*)(void *))mmcConnect,
@@ -406,13 +406,6 @@ void mmcInit(void) {
  * @brief   Initializes an instance.
  *
  * @param[out] mmcp         pointer to the @p MMCDriver object
- * @param[in] spip          pointer to the SPI driver to be used as interface
- * @param[in] lscfg         low speed configuration for the SPI driver
- * @param[in] hscfg         high speed configuration for the SPI driver
- * @param[in] is_protected  function that returns the card write protection
- *                          setting
- * @param[in] is_inserted   function that returns the card insertion sensor
- *                          status
  *
  * @init
  */
@@ -430,13 +423,13 @@ void mmcObjectInit(MMCDriver *mmcp) {
  * @brief   Configures and activates the MMC peripheral.
  *
  * @param[in] mmcp      pointer to the @p MMCDriver object
- * @param[in] config    pointer to the @p MMCConfig object. Must be @p NULL.
+ * @param[in] config    pointer to the @p MMCConfig object.
  *
  * @api
  */
 void mmcStart(MMCDriver *mmcp, const MMCConfig *config) {
 
-  chDbgCheck((mmcp != NULL) && (config == NULL), "mmcStart");
+  chDbgCheck((mmcp != NULL) && (config != NULL), "mmcStart");
 
   chSysLock();
   chDbgAssert(mmcp->state == MMC_STOP, "mmcStart(), #1", "invalid state");

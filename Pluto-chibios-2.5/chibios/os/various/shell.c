@@ -38,16 +38,6 @@
  */
 EventSource shell_terminated;
 
-/**
- * @brief   Abort command event source when "Ctrl-c" is input.
- */
-EventSource abort_command;
-
-static void _putc(BaseSequentialStream *chp, char c) {
-
-  chSequentialStreamWrite(chp, (const uint8_t *)&c, 1);
-}
-
 static char *_strtok(char *str, const char *delim, char **saveptr) {
   char *token;
   if (str)
@@ -218,7 +208,6 @@ static msg_t shell_thread(void *p) {
 void shellInit(void) {
 
   chEvtInit(&shell_terminated);
-  chEvtInit(&abort_command);
 }
 
 /**
@@ -275,18 +264,11 @@ bool_t shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
       chprintf(chp, "^D");
       return TRUE;
     }
-    if (c == 3) {
-      chprintf(chp, "^C\r\n");
-      if(chEvtIsListeningI(&abort_command)) { // TODO - rohitrangan - do we have to syslock
-        chEvtBroadcastI(&abort_command);
-      }
-      return FALSE;
-    }
     if (c == 8) {
       if (p != line) {
-        _putc(chp, c);
-        _putc(chp, 0x20);
-        _putc(chp, c);
+        chSequentialStreamPut(chp, c);
+        chSequentialStreamPut(chp, 0x20);
+        chSequentialStreamPut(chp, c);
         p--;
       }
       continue;
@@ -299,7 +281,7 @@ bool_t shellGetLine(BaseSequentialStream *chp, char *line, unsigned size) {
     if (c < 0x20)
       continue;
     if (p < line + size - 1) {
-      _putc(chp, c);
+      chSequentialStreamPut(chp, c);
       *p++ = (char)c;
     }
   }
