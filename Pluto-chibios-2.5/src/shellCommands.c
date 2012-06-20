@@ -143,7 +143,7 @@ void cmd_tree(BaseSequentialStream *bss, int argc, char *argv[]) {
   }
   err = f_getfree("/", &clusters, &fsp);
   if (err != FR_OK) {
-    chprintf(bss, "FS: f_getfree() failed\r\n");
+    chprintf(bss, "FS: f_getfree() failed. Error - %d\r\n", err);
     return;
   }
   chprintf(bss,

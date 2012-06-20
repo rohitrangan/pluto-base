@@ -55,6 +55,7 @@ FRESULT scan_files(BaseSequentialStream *bss, char *path) {
       if (fno.fname[0] == '.')
         continue;
       fn = fno.fname;
+      chprintf(bss, "rrangan file name - %s\r\n", fn);
       if (fno.fattrib & AM_DIR) {
         path[i++] = '/';
         strcpy(&path[i], fn);
@@ -64,7 +65,8 @@ FRESULT scan_files(BaseSequentialStream *bss, char *path) {
         path[i] = 0;
       }
       else {
-        chprintf(bss, "%s/%s\r\n", path, fn);
+        chprintf(bss, "In else %s/%s\r\n", path, fn);
+        chThdSleepMilliseconds(10);
       }
     }
   }
