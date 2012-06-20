@@ -12,7 +12,7 @@
 #define PLUTO_USE_FATFS 			TRUE
 
 /*To use the onboard accelerometer */
-#define PLUTO_USE_ACCELEROMETER		FALSE
+#define PLUTO_USE_ACCELEROMETER		TRUE
 
 /*To use the onboard barometer */
 #define PLUTO_USE_BAROMETER			FALSE

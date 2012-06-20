@@ -35,9 +35,7 @@ int main(void) {
    */
   SD1Init() ;
   chprintf((BaseSequentialStream *)&SD1, "\r\nInitializing...\r\n") ;
-#if PLUTO_USE_ACCELEROMETER || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
-  I2CInitialize() ;
-#endif
+
   /*
    * Shell manager initialization.
    */
@@ -45,6 +43,11 @@ int main(void) {
   Thread *shelltp = NULL;
   shellInit();
 #endif
+
+#if PLUTO_USE_ACCELEROMETER || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
+  I2CInitialize() ;
+#endif
+
 #if PLUTO_USE_FATFS
   startMMC() ;
 #endif

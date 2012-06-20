@@ -21,6 +21,8 @@ void readAccelerometerData(uint8_t mode, int16_t val[3]) {
 	for(i = 0 ; i < 6 ; i++)
 		rxbuf[i] = 0x00 ;
 
+	i2cAcquireBus(&I2CD1);
+
 	switch(mode) {
 		case 1  : txbuf[0] = ACCEL_XOUT_H ;
 				  i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 1, rxbuf, 6) ;
@@ -41,4 +43,5 @@ void readAccelerometerData(uint8_t mode, int16_t val[3]) {
 		default : return ;
 	}
 
+	i2cReleaseBus(&I2CD1);
 }

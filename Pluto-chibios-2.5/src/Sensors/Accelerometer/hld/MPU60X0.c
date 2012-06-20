@@ -32,13 +32,10 @@ void set_mpu_i2c(BaseSequentialStream *bss) {
 
 	uint8_t txbuf[10], rxbuf[10] ;
 
+	i2cAcquireBus(&I2CD1);
+
 	txbuf[0] = PWR_MGMT_1 ;
 	txbuf[1] = 0x01 ;
-	i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
-	chThdSleepMilliseconds(100) ;
-
-	txbuf[0] = GYRO_CONFIG ;
-	txbuf[1] = 0x00 ;
 	i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
 	chThdSleepMilliseconds(100) ;
 
@@ -47,6 +44,10 @@ void set_mpu_i2c(BaseSequentialStream *bss) {
 	i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
 	chThdSleepMilliseconds(100) ;
 
+	txbuf[0] = GYRO_CONFIG ;
+	txbuf[1] = 0x00 ;
+	i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
+	chThdSleepMilliseconds(100) ;
 
 	txbuf[0] = SMPRT_DIV ;
 	txbuf[1] = 0x09 ;
@@ -56,9 +57,10 @@ void set_mpu_i2c(BaseSequentialStream *bss) {
 
 	txbuf[0] = SMPRT_DIV ;
 	i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 1, rxbuf, 4) ;
-	chprintf(bss, "MPU60X0 Driver Ready.\r\n") ;
-	chThdSleepMilliseconds(100) ;
 
+	chThdSleepMilliseconds(100) ;
+	i2cReleaseBus(&I2CD1);
+	chprintf(bss, "MPU60X0 Driver Ready.\r\n") ;
 }
 
 /*

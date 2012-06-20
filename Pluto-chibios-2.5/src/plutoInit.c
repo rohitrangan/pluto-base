@@ -72,7 +72,7 @@ void SD1Init(void) {
 /*Initializes I2C Drivers 1 and 3 */
 void I2CInitialize(void) {
 
-	i2cInit() ;
+	// i2cInit() ;
 
 #if PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
 	i2cStart(&I2CD3, &i2cfg3);
@@ -85,6 +85,7 @@ void I2CInitialize(void) {
 #endif	/*PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
 
 #if PLUTO_USE_ACCELEROMETER
+	i2cAcquireBus(&I2CD1);
 	i2cStart(&I2CD1, &i2cfg1);
 
 	/*To Link PB8 and PB9 to I2C1 function */
@@ -92,7 +93,7 @@ void I2CInitialize(void) {
 	palSetPadMode(GPIOB, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN);//PAL_STM32_OTYPE_OPENDRAINN);// | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP);// | PAL_STM32_OTYPE_OPENDRAIN);
 
 	chThdSleepMilliseconds(100);
-
+	i2cReleaseBus(&I2CD1);
 	set_mpu_i2c((BaseSequentialStream *)&SD1) ;
 #endif	/*PLUTO_USE_ACCELEROMETER */
 
