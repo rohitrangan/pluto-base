@@ -20,10 +20,10 @@ enum{
 };
 
 // Calibration coefficients
-static int16_t  ac1=0, ac2=0, ac3=0, b1=0, b2=0, mb=0, mc=0, md=0;
+/*static int16_t  ac1=0, ac2=0, ac3=0, b1=0, b2=0, mb=0, mc=0, md=0;
 static uint16_t ac4=0, ac5=0, ac6=0;
 
-static uint32_t up = 0, ut = 0;
+static uint32_t up = 0, ut = 0;*/
 static uint32_t pval = 0;
 static int32_t  tval = 0;
 
@@ -36,71 +36,51 @@ static int32_t  tval = 0;
  *
  */
 
-void initialize_bmp180(uint8_t operating_mode){
-
-	delay_bmp180_temperature = 6; //4.5 ms as per datasheet
+void initialize_bmp180(uint8_t operating_mode) {
+	delay_bmp180_temperature = 5; //4.5 ms as per datasheet
 	oss = operating_mode;
-	if(operating_mode == 0){
+	if(operating_mode == 0) {
 		measurement_mode = BOSCH_OSS0;
 		delay_bmp180 = 6;
 	}
-
-	if(operating_mode == 1){
+	if(operating_mode == 1) {
 		measurement_mode = BOSCH_OSS1;
 		delay_bmp180 = 9;
 	}
-
-	if(operating_mode == 2){
+	if(operating_mode == 2) {
 		measurement_mode = BOSCH_OSS2;
 		delay_bmp180 = 15;
 	}
-
-	if(operating_mode == 3){
+	if(operating_mode == 3) {
 		measurement_mode = BOSCH_OSS3;
 		delay_bmp180 = 27;
 	}
-
-	chprintf((BaseSequentialStream *)&SD1, "Inside initialize. measurement delay and oss %x, %d, %x \r\n", measurement_mode,delay_bmp180, oss);
 }
 
-void read_bmp180_coefficient(void){
+void read_bmp180_coefficient(int16_t reg1[8], uint16_t reg2[3]) {
   /* wait until sensor inits */
 	chThdSleepMilliseconds(20); //(datasheet 10 ms)
 
-  chprintf((BaseSequentialStream *)&SD1, "inside init_bmp \r\n");
+	bmp_txbuf[0] = 0xAA;
+	i2cAcquireBus(&I2C_BMP) ;
+	i2cMasterTransmit(&I2C_BMP, BMP_ADDR, bmp_txbuf, 1, bmp_rxbuf, 22);
+	i2cReleaseBus(&I2C_BMP) ;
 
-  bmp_txbuf[0] = 0xAA;
-   i2cMasterTransmit(&I2C_BMP,  BMP_ADDR, bmp_txbuf, 1, bmp_rxbuf, 22);
+	reg1[0] = (bmp_rxbuf[0] << 8) + bmp_rxbuf[1];	/*AC1 */
+	reg1[1] = (bmp_rxbuf[2] << 8) + bmp_rxbuf[3];	/*AC2 */
+	reg1[2] = (bmp_rxbuf[4] << 8) + bmp_rxbuf[5];	/*AC3 */
+	reg2[0] = (bmp_rxbuf[6] << 8) + bmp_rxbuf[7];	/*AC4 */
+	reg2[1] = (bmp_rxbuf[8] << 8) + bmp_rxbuf[9];	/*AC5 */
+	reg2[2] = (bmp_rxbuf[10] << 8) + bmp_rxbuf[11];	/*AC6 */
+	reg1[3] = (bmp_rxbuf[12] << 8) + bmp_rxbuf[13];	/*B1 */
+	reg1[4] = (bmp_rxbuf[14] << 8) + bmp_rxbuf[15];	/*B2 */
+	reg1[5] = (bmp_rxbuf[16] << 8) + bmp_rxbuf[17];	/*MB */
+	reg1[6] = (bmp_rxbuf[18] << 8) + bmp_rxbuf[19];	/*MC */
+	reg1[7] = (bmp_rxbuf[20] << 8) + bmp_rxbuf[21];	/*MD */
 
-   ac1 = (bmp_rxbuf[0] << 8) + bmp_rxbuf[1];
-   ac2 = (bmp_rxbuf[2] << 8) + bmp_rxbuf[3];
-   ac3 = (bmp_rxbuf[4] << 8) + bmp_rxbuf[5];
-   ac4 = (bmp_rxbuf[6] << 8) + bmp_rxbuf[7];
-   ac5 = (bmp_rxbuf[8] << 8) + bmp_rxbuf[9];
-   ac6 = (bmp_rxbuf[10] << 8) + bmp_rxbuf[11];
-   b1 = (bmp_rxbuf[12] << 8) + bmp_rxbuf[13];
-   b2 = (bmp_rxbuf[14] << 8) + bmp_rxbuf[15];
-   mb = (bmp_rxbuf[16] << 8) + bmp_rxbuf[17];
-   mc = (bmp_rxbuf[18] << 8) + bmp_rxbuf[19];
-   md = (bmp_rxbuf[20] << 8) + bmp_rxbuf[21];
-
- 	chprintf((BaseSequentialStream *)&SD1, "Value of ac1 %d \r\n", ac1);
-	chprintf((BaseSequentialStream *)&SD1, "Value of ac2 %d \r\n", ac2);
-	chprintf((BaseSequentialStream *)&SD1, "Value of ac3 %d \r\n", ac3);
-	chprintf((BaseSequentialStream *)&SD1, "Value of ac4 %u \r\n", ac4);
-	chprintf((BaseSequentialStream *)&SD1, "Value of ac5 %u \r\n", ac5);
-	chprintf((BaseSequentialStream *)&SD1, "Value of ac6 %u \r\n", ac6);
-	chprintf((BaseSequentialStream *)&SD1, "Value of b1 %d \r\n", b1);
-	chprintf((BaseSequentialStream *)&SD1, "Value of b2 %d \r\n", b2);
-	chprintf((BaseSequentialStream *)&SD1, "Value of mb %d \r\n", mb);
-	chprintf((BaseSequentialStream *)&SD1, "Value of mc %d \r\n", mc);
-	chprintf((BaseSequentialStream *)&SD1, "Value of md %d \r\n", md);
-
-
- }
+}
 
 void read_bmp180_temperature(){
-
 
 //	chprintf((BaseSequentialStream *)&SD6,"Inside read_temperature \r\n");
 
@@ -120,7 +100,6 @@ void read_bmp180_temperature(){
   //  chprintf((BaseSequentialStream *)&SD6,"Temp Measurement Return %x, %x\r\n", bmp_rxbuf[0], bmp_rxbuf[1]);
 
   //  chprintf((BaseSequentialStream *)&SD6,"Temp Measurement Return %U\r\n", ut);
-
 
 }
 
@@ -145,18 +124,15 @@ void read_bmp180_pressure(){
 
 }
 
-
-
-
-void bmp180_calc(int state){
-  switch(state){
+/*void bmp180_calc(int state){
+  switch(state) {
   case TEMP:
-  	/* process termal data */
+  	process thermal data
   	ut = (bmp_rxbuf[0] << 8) + bmp_rxbuf[1];
   	break;
 
   case PRESSURE:
-  	/* now we have all 3 bytes. Calculate pressure using black magic from datasheet */
+  	now we have all 3 bytes. Calculate pressure using black magic from datasheet
     up = ((bmp_rxbuf[0] << 16) + (bmp_rxbuf[1] << 8) + bmp_rxbuf[2]) >> (8 - oss);
 
   	int32_t  x1, x2, x3, b3, b5, b6, p;
@@ -193,5 +169,5 @@ void bmp180_calc(int state){
   default:
   	break;
   }
-}
+}*/
 

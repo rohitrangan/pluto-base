@@ -26,14 +26,17 @@
 
 #define BOSCH_PRES  			0xF4 // pressure with OSRS=3 (page 17 in manual)
 
-
 #define ULTRA_LOW_POWER 		0
 #define STANDARD				1
 #define HIGH_RESOLUTION			2
 #define ULTRA_HIGH_RESOLUTION	3
 
+extern int16_t delay_bmp180 ;
+extern int16_t delay_bmp180_temperature ;
+extern uint8_t oss, measurement_mode ;
+
 void initialize_bmp180(uint8_t operating_mode);
-void read_bmp180_coefficient(void);
+void read_bmp180_coefficient(int16_t reg1[8], uint16_t reg2[3]);
 void read_bmp180_temperature(void);
 void read_bmp180_pressure(void);
 void bmp180_calc(int state);

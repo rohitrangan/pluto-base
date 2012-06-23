@@ -9,6 +9,7 @@
 #include "ch.h"
 #include "hal.h"
 #include "ff.h"
+#include "chprintf.h"
 
 #include "plutoInit.h"
 #include "hmc5883.h"
@@ -62,6 +63,38 @@ static const I2CConfig i2cfg1 = {
 };
 #endif	/*PLUTO_USE_ACCELEROMETER */
 
+#if PLUTO_USE_SCANNER
+void i2cScanner(I2CDriver *FindI2C, char *driverName) {
+
+	uint8_t x = 0, txbuf[2], rxbuf[2] ;
+	msg_t messages = 0 ;
+
+	for(x = 0 ; x < 128 ; x++){
+		txbuf[0] = 0x00 ;
+		txbuf[1] = 0x00 ;
+
+		i2cAcquireBus(FindI2C) ;
+	    messages = i2cMasterTransmit(FindI2C, x, txbuf, 2, rxbuf, 0) ;
+	    i2cReleaseBus(FindI2C) ;
+	    if(messages == 0) {
+	    	if(x == 0x28)
+	    		chprintf((BaseSequentialStream *)&SD1, "MS4515\tDetected on %s\r\n", driverName) ;
+	    	if(x == 0x1E)
+	    		chprintf((BaseSequentialStream *)&SD1, "HMC\tDetected on %s\r\n", driverName) ;
+	    	if(x == 0x68)
+	    		chprintf((BaseSequentialStream *)&SD1, "MPU\tDetected on %s\r\n", driverName) ;
+	    	if(x == 0x69)
+	    		chprintf((BaseSequentialStream *)&SD1, "MPU\tDetected on %s\r\n", driverName) ;
+	    	if(x == 0x77)
+	    		chprintf((BaseSequentialStream *)&SD1, "BMP\tDetected on %s\r\n", driverName) ;
+	    }
+		chThdSleepMilliseconds(1) ;
+	}
+	chThdSleepMilliseconds(100) ;
+
+}
+#endif /*PLUTO_USE_SCANNER */
+
 /*Initializes SerialDriver1 */
 void SD1Init(void) {
 	sdStart(&SD1, &usart1);
@@ -72,35 +105,42 @@ void SD1Init(void) {
 /*Initializes I2C Drivers 1 and 3 */
 void I2CInitialize(void) {
 
-	// i2cInit() ;
-
 #if PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
-	i2cStart(&I2CD3, &i2cfg3);
+	i2cStart(&I2CD3, &i2cfg3) ;
 
 	/*To Link PA8 and PC9 to I2C3 function */
-	palSetPadMode(GPIOA, 8,  PAL_MODE_ALTERNATE(4)| PAL_STM32_OTYPE_OPENDRAIN);// | PAL_STM32_OTYPE_OPENDRAIN);
-	palSetPadMode(GPIOC, 9,  PAL_MODE_ALTERNATE(4)| PAL_STM32_OTYPE_OPENDRAIN);// | PAL_STM32_OTYPE_OPENDRAIN);
+	palSetPadMode(GPIOA, 8,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
+	palSetPadMode(GPIOC, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
 
-	chThdSleepMilliseconds(100);
+	chThdSleepMilliseconds(100) ;
+#if PLUTO_USE_SCANNER
+	i2cScanner(&I2CD3, "I2C3") ;
+#endif	/*PLUTO_USE_SCANNER */
 #endif	/*PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
 
 #if PLUTO_USE_ACCELEROMETER
-	i2cAcquireBus(&I2CD1);
-	i2cStart(&I2CD1, &i2cfg1);
+	i2cStart(&I2CD1, &i2cfg1) ;
 
 	/*To Link PB8 and PB9 to I2C1 function */
-	palSetPadMode(GPIOB, 8,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN);// | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP);// | PAL_STM32_OTYPE_OPENDRAIN);
-	palSetPadMode(GPIOB, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN);//PAL_STM32_OTYPE_OPENDRAINN);// | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP);// | PAL_STM32_OTYPE_OPENDRAIN);
+	palSetPadMode(GPIOB, 8,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;// | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP);// | PAL_STM32_OTYPE_OPENDRAIN);
+	palSetPadMode(GPIOB, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;//PAL_STM32_OTYPE_OPENDRAINN);// | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP);// | PAL_STM32_OTYPE_OPENDRAIN);
 
-	chThdSleepMilliseconds(100);
-	i2cReleaseBus(&I2CD1);
-	set_mpu_i2c((BaseSequentialStream *)&SD1) ;
+	chThdSleepMilliseconds(100) ;
+#if PLUTO_USE_SCANNER
+	i2cScanner(&I2CD1, "I2C1") ;
+#endif	/*PLUTO_USE_SCANNER */
+	set_mpu_i2c() ;
 #endif	/*PLUTO_USE_ACCELEROMETER */
 
 #if PLUTO_USE_MAGNETOMETER
 	/*Set HMC_DRDY pin as input */
-	palSetPadMode(HMC_DRDY_PORT, HMC_DRDY_PIN, PAL_MODE_INPUT);
+	palSetPadMode(GPIOC, 14, PAL_MODE_INPUT) ;
+	initialize_HMC(AVERAGE4, ODR6, MODE_NORMAL, RANGE_880mGa, OP_MODE_SINGLE) ;
 #endif	/*PLUTO_USE_MAGNETOMETER*/
+
+#if PLUTO_USE_BAROMETER
+	initialize_bmp180(ULTRA_HIGH_RESOLUTION) ;
+#endif	/*PLUTO_USE_BAROMETER */
 
 }
 

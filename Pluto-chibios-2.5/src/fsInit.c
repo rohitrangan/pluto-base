@@ -5,6 +5,7 @@
  *for using the MicroSD Card.
  */
 
+#include <stdio.h>
 #include <string.h>
 #include "plutoconf.h"
 
@@ -39,38 +40,37 @@ static MMCConfig mmccfg = {&SPID2, &ls_spicfg, &hs_spicfg};
  *and display them.
  */
 FRESULT scan_files(BaseSequentialStream *bss, char *path) {
-  FRESULT res;
-  FILINFO fno;
-  DIR dir;
-  int i;
-  char *fn;
+	FRESULT res;
+	FILINFO fno;
+	DIR dir;
+	int i;
+	char *fn;
+	res = f_opendir(&dir, path);
 
-  res = f_opendir(&dir, path);
-  if (res == FR_OK) {
-    i = strlen(path);
-    for (;;) {
-      res = f_readdir(&dir, &fno);
-      if (res != FR_OK || fno.fname[0] == 0)
-        break;
-      if (fno.fname[0] == '.')
-        continue;
-      fn = fno.fname;
-      chprintf(bss, "rrangan file name - %s\r\n", fn);
-      if (fno.fattrib & AM_DIR) {
-        path[i++] = '/';
-        strcpy(&path[i], fn);
-        res = scan_files(bss, path);
-        if (res != FR_OK)
-          break;
-        path[i] = 0;
-      }
-      else {
-        chprintf(bss, "In else %s/%s\r\n", path, fn);
-        chThdSleepMilliseconds(10);
-      }
-    }
-  }
-  return res;
+	if(res == FR_OK) {
+		i = strlen(path);
+		for( ; ; ) {
+			res = f_readdir(&dir, &fno);
+			if(res != FR_OK || fno.fname[0] == 0)
+				break;
+			if(fno.fname[0] == '.')
+				continue;
+			fn = fno.fname;
+			if(fno.fattrib & AM_DIR) {
+				path[i++] = '/';
+				strcpy(&path[i], fn);
+				//sprintf(&path[i], "/%s", fn);
+				res = scan_files(bss, path);
+				if(res != FR_OK)
+					break;
+				path[i] = 0;
+			}
+			else {
+				chprintf(bss, "%s/%s\r\n", path, fn);
+			}
+		}
+	}
+	return res;
 }
 
 /*Starts the SPI2 Driver and the MMC object */

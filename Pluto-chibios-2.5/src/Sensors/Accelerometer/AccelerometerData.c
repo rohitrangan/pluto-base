@@ -17,31 +17,53 @@
 void readAccelerometerData(uint8_t mode, int16_t val[3]) {
 
 	uint8_t txbuf[6], rxbuf[6], i ;
+	msg_t status = RDY_OK ;
 
 	for(i = 0 ; i < 6 ; i++)
 		rxbuf[i] = 0x00 ;
 
-	i2cAcquireBus(&I2CD1);
-
 	switch(mode) {
 		case 1  : txbuf[0] = ACCEL_XOUT_H ;
-				  i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 1, rxbuf, 6) ;
+				  i2cAcquireBus(&I2C_MPU) ;
+				  status = i2cMasterTransmit(&I2C_MPU, MPU_ADDR, txbuf, 1, rxbuf, 6) ;
+				  i2cReleaseBus(&I2C_MPU) ;
+
+				  if(status != RDY_OK)
+					  return ;
+
 				  val[0] = (rxbuf[0] << 8) + rxbuf[1] ;
 				  val[1] = (rxbuf[2] << 8) + rxbuf[3] ;
 				  val[2] = (rxbuf[4] << 8) + rxbuf[5] ;
+				  chThdSleepMilliseconds(50) ;
 				  break ;
+
 		case 2  : txbuf[0] = GYRO_XOUT_H ;
-		  	  	  i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 1, rxbuf, 6) ;
+				  i2cAcquireBus(&I2C_MPU) ;
+				  status = i2cMasterTransmit(&I2C_MPU, MPU_ADDR, txbuf, 1, rxbuf, 6) ;
+				  i2cReleaseBus(&I2C_MPU) ;
+
+				  if(status != RDY_OK)
+					  return ;
+
 		  	  	  val[0] = (rxbuf[0] << 8) + rxbuf[1] ;
 		  	  	  val[1] = (rxbuf[2] << 8) + rxbuf[3] ;
 		  	  	  val[2] = (rxbuf[4] << 8) + rxbuf[5] ;
+				  chThdSleepMilliseconds(50) ;
 		  	  	  break ;
+
 		case 3  : txbuf[0] = TEMP_OUT_H ;
-				  i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 1, rxbuf, 2) ;
+		  	  	  i2cAcquireBus(&I2C_MPU) ;
+		  	  	  status = i2cMasterTransmit(&I2C_MPU, MPU_ADDR, txbuf, 1, rxbuf, 2) ;
+		  	  	  i2cReleaseBus(&I2C_MPU) ;
+
+		  	  	  if(status != RDY_OK)
+		  	  		  return ;
+
 				  val[0] = (rxbuf[0] << 8) + rxbuf[1] ;
+				  chThdSleepMilliseconds(50) ;
 				  break ;
+
 		default : return ;
 	}
 
-	i2cReleaseBus(&I2CD1);
 }

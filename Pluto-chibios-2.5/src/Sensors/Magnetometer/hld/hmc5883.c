@@ -21,8 +21,7 @@ int32_t hmc_range = 0;
  * OP_Mode = Continuous, Single measurement or Idle mode
  */
 
-void initialize_HMC(uint8_t average, uint8_t ODR, uint8_t Mode, uint8_t Gain, uint8_t OP_Mode)
-{
+void initialize_HMC(uint8_t average, uint8_t ODR, uint8_t Mode, uint8_t Gain, uint8_t OP_Mode) {
 	hmc_txbuf[1] = 0x00;
 	/*Put Address of CONFIG_A in hmc_txbuf[0] */
 	hmc_txbuf[0] = CONFIG_A;
@@ -31,21 +30,27 @@ void initialize_HMC(uint8_t average, uint8_t ODR, uint8_t Mode, uint8_t Gain, ui
 	hmc_txbuf[1] = hmc_txbuf[1] << 5;
 	hmc_txbuf[1] |= (ODR << 2);
 	hmc_txbuf[1] |= Mode;
+	i2cAcquireBus(&I2C_HMC) ;
 	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0);
+	i2cReleaseBus(&I2C_HMC) ;
 
 	hmc_txbuf[1] = 0x00;
 	/*Put Address of CONFIG_B in hmc_txbuf[0] */
 	hmc_txbuf[0] = CONFIG_B;
 	/*Set value for CONFIG_B register */
 	hmc_txbuf[1] |= (Gain << 5);
+	i2cAcquireBus(&I2C_HMC) ;
 	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0);
+	i2cReleaseBus(&I2C_HMC) ;
 
 	hmc_txbuf[1] = 0x00;
 	/*Put Address of MODE register in hmc_txbuf[0] */
 	hmc_txbuf[0] = MODE;
 	/*Set value for MODE register */
 	hmc_txbuf[1] = OP_Mode;
+	i2cAcquireBus(&I2C_HMC) ;
 	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0);
+	i2cReleaseBus(&I2C_HMC) ;
 
 /*	if(Gain == 0)hmc_range = 0.73;
 	if(Gain == 1)hmc_range = 0.92;
@@ -56,40 +61,50 @@ void initialize_HMC(uint8_t average, uint8_t ODR, uint8_t Mode, uint8_t Gain, ui
 	if(Gain == 6)hmc_range = 3.03;
 	if(Gain == 7)hmc_range = 4.35;
 */
-	if(Gain == 0)hmc_range = 730;
-	if(Gain == 1)hmc_range = 920;
-	if(Gain == 2)hmc_range = 1220;
-	if(Gain == 3)hmc_range = 1520;
-	if(Gain == 4)hmc_range = 2270;
-	if(Gain == 5)hmc_range = 2560;
-	if(Gain == 6)hmc_range = 3030;
-	if(Gain == 7)hmc_range = 4350;
+	if(Gain == 0)
+		hmc_range = 730;
+	if(Gain == 1)
+		hmc_range = 920;
+	if(Gain == 2)
+		hmc_range = 1220;
+	if(Gain == 3)
+		hmc_range = 1520;
+	if(Gain == 4)
+		hmc_range = 2270;
+	if(Gain == 5)
+		hmc_range = 2560;
+	if(Gain == 6)
+		hmc_range = 3030;
+	if(Gain == 7)
+		hmc_range = 4350;
 
 }
 
 
-void read_hmc_data(void)
-{
+void read_hmc_data(void) {
 	int16_t hmc_rawx =0, hmc_rawy = 0, hmc_rawz =0;
-	int32_t   x_mag = 0.0, y_mag = 0.0, z_mag =0.0;
+	int32_t  x_mag = 0.0, y_mag = 0.0, z_mag =0.0;
 	/*Send Single Measurement query. Write 0x01 to MODE Register */
 	hmc_txbuf[0] = MODE;
 	hmc_txbuf[1] = 0x01;
 
 	/*Acquire I2C bus before initiating any transfer */
 
+	i2cAcquireBus(&I2C_HMC) ;
 	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0);
+	i2cReleaseBus(&I2C_HMC) ;
 
 	/*Relese I2C bus after transfer is done */
 
-	//chThdSleepMilliseconds(30); /* Sleep for appropriate time - According to ODR */
+	chThdSleepMilliseconds(30); /* Sleep for appropriate time - According to ODR */
 	/*Alternatively Check status of HMC_DRDY_PIN to check availability of new data */
-	while(palReadPad(HMC_DRDY_PORT, HMC_DRDY_PIN)){
-		chprintf((BaseSequentialStream *)&SD6, "N");
-	}
+	/*while(palReadPad(HMC_DRDY_PORT, HMC_DRDY_PIN)) {
+		chprintf((BaseSequentialStream *)&SD1, "N");
+	}*/
 
-
+	i2cAcquireBus(&I2C_HMC) ;
 	i2cMasterReceive(&I2C_HMC, HMC_ADDR, hmc_rxbuf, 6);
+	i2cReleaseBus(&I2C_HMC) ;
 
 	/*These are just test points. Remove these once proper working of these function is confirmed
 	 * and instead of these use pointer to pass values to user space.
@@ -99,13 +114,13 @@ void read_hmc_data(void)
 	hmc_rawz = (hmc_rxbuf[4] << 8) + hmc_rxbuf[5];
 
 	/*Convert raw value in nano Tesla */
-	x_mag = (hmc_range*hmc_rawx)/10;
-	y_mag = (hmc_range*hmc_rawy)/10;
-	z_mag = (hmc_range*hmc_rawz)/10;
+	x_mag = (hmc_range * hmc_rawx) / 10 ;
+	y_mag = (hmc_range * hmc_rawy) / 10 ;
+	z_mag = (hmc_range * hmc_rawz) / 10 ;
 
 	//x_mag = (int32_t)(x_mag*exp_float);
 
-	chprintf((BaseSequentialStream *)&SD1, "Raw and Field: \t%d,\t%d,\t%d,\t%D,\t%D,\t%D \t%D\r\n",hmc_rawx,hmc_rawy,hmc_rawz, x_mag,y_mag,z_mag,hmc_range);
+	chprintf((BaseSequentialStream *)&SD1, "Raw and Field: \t%d,\t%d,\t%d,\t%D,\t%D,\t%D \t%D\r\n", hmc_rawx, hmc_rawy, hmc_rawz, x_mag, y_mag, z_mag, hmc_range) ;
 }
 /*Not behaving as per expectations. Resolve issue of reading value of HMC register */
 
@@ -113,8 +128,10 @@ void read_hmc_register(void){
 
 	uint8_t x = 0;
 
+	i2cAcquireBus(&I2C_HMC) ;
 	i2cMasterReceive(&I2C_HMC, HMC_ADDR, hmc_rxbuf,20);
-	for(x=0;x<20;x++){
+	i2cReleaseBus(&I2C_HMC) ;
+	for(x = 0 ; x < 20 ; x++) {
 		chprintf((BaseSequentialStream *)&SD1,"Register Address:%x, Value: %x\r\n",x,hmc_rxbuf[x] );
 	}
 

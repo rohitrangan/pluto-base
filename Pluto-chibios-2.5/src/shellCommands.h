@@ -42,6 +42,14 @@ void cmd_tree(BaseSequentialStream *bss, int argc, char *argv[]);
 void cmd_accelerometer(BaseSequentialStream *bss, int argc, char *argv[]);
 #endif	/*PLUTO_USE_ACCELEROMETER */
 
+#if PLUTO_USE_MAGNETOMETER
+void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]);
+#endif /*PLUTO_USE_MAGNETOMETER */
+
+#if PLUTO_USE_BAROMETER
+void cmd_barometer(BaseSequentialStream *bss, int argc, char *argv[]);
+#endif /*PLUTO_USE_BAROMETER */
+
 #endif	/*PLUTO_USE_SHELL */
 
 #endif	/*SHELLCOMMANDS_H_ */

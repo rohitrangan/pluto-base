@@ -6,6 +6,7 @@
  */
 
 #include "mcuconf.h"
+#include "chconf.h"
 #include "ch.h"
 #include "hal.h"
 #include "MPU60X0.h"
@@ -28,39 +29,55 @@ uint8_t debug_var = 0x00;
  * MPU registers can be read thereafter.
  * Added by rohitrangan 31-05-2012
  */
-void set_mpu_i2c(BaseSequentialStream *bss) {
+void set_mpu_i2c(void) {
 
 	uint8_t txbuf[10], rxbuf[10] ;
-
-	i2cAcquireBus(&I2CD1);
+	msg_t status = RDY_OK ;
 
 	txbuf[0] = PWR_MGMT_1 ;
 	txbuf[1] = 0x01 ;
-	i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
-	chThdSleepMilliseconds(100) ;
+	i2cAcquireBus(&I2C_MPU) ;
+	status = i2cMasterTransmit(&I2C_MPU, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
+	i2cReleaseBus(&I2C_MPU) ;
 
-	txbuf[0] = ACCEL_CONFIG ;
-	txbuf[1] = 0x00 ;
-	i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
+	if(status != RDY_OK)
+		return ;
+
 	chThdSleepMilliseconds(100) ;
 
 	txbuf[0] = GYRO_CONFIG ;
 	txbuf[1] = 0x00 ;
-	i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
+	i2cAcquireBus(&I2C_MPU) ;
+	status = i2cMasterTransmit(&I2C_MPU, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
+	i2cReleaseBus(&I2C_MPU) ;
+
+	if(status != RDY_OK)
+		return ;
+
+	chThdSleepMilliseconds(100) ;
+
+	txbuf[0] = ACCEL_CONFIG ;
+	txbuf[1] = 0x00 ;
+	i2cAcquireBus(&I2C_MPU) ;
+	status = i2cMasterTransmit(&I2C_MPU, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
+	i2cReleaseBus(&I2C_MPU) ;
+
+	if(status != RDY_OK)
+		return ;
+
 	chThdSleepMilliseconds(100) ;
 
 	txbuf[0] = SMPRT_DIV ;
 	txbuf[1] = 0x09 ;
-	i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
+	i2cAcquireBus(&I2C_MPU) ;
+	status = i2cMasterTransmit(&I2C_MPU, MPU_ADDR, txbuf, 2, rxbuf, 0) ;
+	i2cReleaseBus(&I2C_MPU) ;
+
+	if(status != RDY_OK)
+		return ;
+
 	chThdSleepMilliseconds(100) ;
 
-
-	txbuf[0] = SMPRT_DIV ;
-	i2cMasterTransmit(&I2CD1, MPU_ADDR, txbuf, 1, rxbuf, 4) ;
-
-	chThdSleepMilliseconds(100) ;
-	i2cReleaseBus(&I2CD1);
-	chprintf(bss, "MPU60X0 Driver Ready.\r\n") ;
 }
 
 /*
@@ -239,8 +256,10 @@ void mpu_i2c_write(uint8_t addr, uint8_t value){
 #ifdef MPU_DEBUG
 	chprintf((BaseSequentialStream *)&OUTPUT,"Address: %x Value: %x\r\n", mpu_txbuf[0],mpu_txbuf[1]);
 #endif
+	i2cAcquireBus(&I2C_MPU) ;
 	i2cMasterTransmit(&I2C_MPU, MPU_ADDR, mpu_txbuf, 2, mpu_rxbuf, 0);
-	chThdSleepMilliseconds(1000);
+	i2cReleaseBus(&I2C_MPU) ;
+	chThdSleepMilliseconds(200);
 }
 
 

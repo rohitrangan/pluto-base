@@ -5,7 +5,9 @@
 SENSORSRC = ${SENSORDIR}/Accelerometer/hld/MPU60X0.c \
 			${SENSORDIR}/Accelerometer/AccelerometerData.c \
 	    	${SENSORDIR}/BarometricPressure/hld/BMP180.c \
+	    	${SENSORDIR}/BarometricPressure/BarometerData.c \
 	    	${SENSORDIR}/Magnetometer/hld/hmc5883.c \
+	    	${SENSORDIR}/Magnetometer/MagnetometerData.c \
 	    	${SENSORDIR}/PressureTransducer/hld/ms4515.c
 			
 # Include Directories.

@@ -58,8 +58,9 @@
 #define OP_MODE_SINGLE		1
 #define OP_MODE_IDLE		2
 
+extern int32_t hmc_range;
 void initialize_HMC(uint8_t average, uint8_t ODR, uint8_t Mode, uint8_t Gain, uint8_t OP_Mode);
 void read_hmc_values(void);
-
+void read_hmc_data(void);
 
 #endif /* HMC5883_H_ */

@@ -26,11 +26,11 @@ float fpuTest(BaseSequentialStream *bss, char *operand1, char oper, char *operan
 		break;
 	case '/': ans = float1 / float2;
 		break;
-	case 's': ans = sinf((float)float1/180*3.14);
+	case 's': ans = sinf((float)float1/180*M_PI);
 		break;
-	case 'c': ans = cosf((float)float1/180*3.14);
+	case 'c': ans = cosf((float)float1/180*M_PI);
 		break;
-	case 't': ans = tanf((float)float1/180*3.14);
+	case 't': ans = tanf((float)float1/180*M_PI);
 		break;
 	case 'p': ans = powf(float1, float2);
 		break;
@@ -39,6 +39,7 @@ float fpuTest(BaseSequentialStream *bss, char *operand1, char oper, char *operan
 	case 'r': ans = (float)sqrt(float1);
 		break;
 	default: chprintf(bss, "Not a valid operator\r\n");
+		break;
   }
   return ans;
 }

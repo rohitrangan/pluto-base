@@ -333,7 +333,7 @@
 #define CLKSEL_32Khz		4		/* PLL with external 32.768 kHz reference */
 #define CLKSEL_19MHz		5		/* PLL with external 19.2MHzreference */
 
-void set_mpu_i2c(BaseSequentialStream *chp) ;	//Added by rohitrangan on 30-05-2012
+void set_mpu_i2c(void) ;	//Added by rohitrangan on 30-05-2012
 uint8_t set_mpu_sample_rate(uint8_t samplerate_divisor);
 uint8_t set_mpu_config_regsiter(uint8_t ext_sync_set, uint8_t dlpf_cfg);
 uint8_t set_mpu_gyro(uint8_t xgyro_st, uint8_t ygyro_st, uint8_t zgyro_st, uint8_t gyro_range);

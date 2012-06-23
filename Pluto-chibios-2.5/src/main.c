@@ -18,6 +18,7 @@
 /*
  * Application entry point.
  */
+
 int main(void) {
 
   /*
@@ -35,7 +36,9 @@ int main(void) {
    */
   SD1Init() ;
   chprintf((BaseSequentialStream *)&SD1, "\r\nInitializing...\r\n") ;
-
+#if PLUTO_USE_ACCELEROMETER || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
+  I2CInitialize() ;
+#endif
   /*
    * Shell manager initialization.
    */
@@ -43,11 +46,6 @@ int main(void) {
   Thread *shelltp = NULL;
   shellInit();
 #endif
-
-#if PLUTO_USE_ACCELEROMETER || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
-  I2CInitialize() ;
-#endif
-
 #if PLUTO_USE_FATFS
   startMMC() ;
 #endif
@@ -56,7 +54,7 @@ int main(void) {
    * Normal main() thread activity, in this demo it does nothing except
    * sleeping in a loop and listen for events.
    */
-   while (TRUE) {
+   while(TRUE) {
 #if PLUTO_USE_SHELL
 	   if(!shelltp)
 		   shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
