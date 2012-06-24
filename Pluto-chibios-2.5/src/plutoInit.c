@@ -54,14 +54,14 @@ static const I2CConfig i2cfg3 = {
 };
 #endif	/*PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
 
-#if PLUTO_USE_ACCELEROMETER
+#if PLUTO_USE_IMU
 /*Config for I2C1 */
 static const I2CConfig i2cfg1 = {
     OPMODE_I2C,
     400000,
     FAST_DUTY_CYCLE_16_9,//STD_DUTY_CYCLE,
 };
-#endif	/*PLUTO_USE_ACCELEROMETER */
+#endif	/*PLUTO_USE_IMU */
 
 #if PLUTO_USE_SCANNER
 void i2cScanner(I2CDriver *FindI2C, char *driverName) {
@@ -118,7 +118,7 @@ void I2CInitialize(void) {
 #endif	/*PLUTO_USE_SCANNER */
 #endif	/*PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
 
-#if PLUTO_USE_ACCELEROMETER
+#if PLUTO_USE_IMU
 	i2cStart(&I2CD1, &i2cfg1) ;
 
 	/*To Link PB8 and PB9 to I2C1 function */
@@ -130,7 +130,7 @@ void I2CInitialize(void) {
 	i2cScanner(&I2CD1, "I2C1") ;
 #endif	/*PLUTO_USE_SCANNER */
 	set_mpu_i2c() ;
-#endif	/*PLUTO_USE_ACCELEROMETER */
+#endif	/*PLUTO_USE_IMU */
 
 #if PLUTO_USE_MAGNETOMETER
 	/*Set HMC_DRDY pin as input */

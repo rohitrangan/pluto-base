@@ -18,7 +18,7 @@
 #include "shellCommands.h"
 #include "BarometerData.h"
 #include "MagnetometerData.h"
-#include "AccelerometerData.h"
+#include "IMUData.h"
 
 #if PLUTO_USE_SHELL
 const ShellCommand commands[] = {
@@ -33,9 +33,9 @@ const ShellCommand commands[] = {
 	{"tree", cmd_tree},
 #endif	/*PLUTO_USE_FATFS */
 	{"clear", cmd_clear},
-#if PLUTO_USE_ACCELEROMETER
-	{"accelerometer", cmd_accelerometer},
-#endif	/*PLUTO_USE_ACCELEROMETER */
+#if PLUTO_USE_IMU
+	{"imu", cmd_imu},
+#endif	/*PLUTO_USE_IMU */
 #if PLUTO_USE_MAGNETOMETER
 	{"magnetometer", cmd_magnetometer},
 #endif	/*PLUTO_USE_MAGNETOMETER */
@@ -193,58 +193,73 @@ void cmd_clear(BaseSequentialStream *bss, int argc, char *argv[]) {
 
 }
 
-#if PLUTO_USE_ACCELEROMETER
-void cmd_accelerometer(BaseSequentialStream *bss, int argc, char *argv[]) {
+#if PLUTO_USE_IMU
+void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
 
 	uint8_t i ;
 	int16_t data[3] ;
 
 	if(argc != 1) {
-		chprintf(bss, "Usage: accelerometer [options]\r\nOptions:\r\n") ;
+		chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
 		chprintf(bss, " --help \t| -h\tDisplay help.\r\n") ;
 		chprintf(bss, " --temp \t| -t\tTemperature Sensor's value.\r\n") ;
 		chprintf(bss, " --accel\t| -a\tAccelerometer's value.\r\n") ;
 		chprintf(bss, " --gyro \t| -g\tGyrometer's value.\r\n") ;
+		chprintf(bss, " --angle\t| -n\tEuler angles value. First pitch, then roll and yaw.\r\n") ;
 		return ;
 	}
 	if((!strcasecmp("--temp", argv[0])) || (!strcasecmp("-t", argv[0]))) {
 		for(i = 0 ; i < 50 ; i++) {
-			readAccelerometerData(3, data) ;
+			readIMUData(3, data) ;
 			chprintf(bss, "Temperature Sensor Value:- %d\r\n", data[0]) ;
 			chThdSleepMilliseconds(100) ;
 		}
 	}
 	else if((!strcasecmp("--accel", argv[0])) || (!strcasecmp("-a", argv[0]))) {
 		for(i = 0 ; i < 50 ; i++) {
-			readAccelerometerData(1, data) ;
+			readIMUData(1, data) ;
 			chprintf(bss, "Accelerometer Value:- %d  %d  %d\r\n", data[0], data[1], data[2]) ;
 			chThdSleepMilliseconds(100) ;
 		}
 	}
 	else if((!strcasecmp("--gyro", argv[0])) || (!strcasecmp("-g", argv[0]))) {
 		for(i = 0 ; i < 50 ; i++) {
-			readAccelerometerData(2, data) ;
+			readIMUData(2, data) ;
 			chprintf(bss, "Gyrometer Value:- %d  %d  %d\r\n", data[0], data[1], data[2]) ;
 			chThdSleepMilliseconds(100) ;
 		}
 	}
+#if CORTEX_USE_FPU
+	else if((!strcasecmp("--angle", argv[0])) || (!strcasecmp("-n", argv[0]))) {
+		float angles[3] ;
+		for(i = 0 ; i < 50 ; i++) {
+			eulerAngles(angles) ;
+			chprintf(bss, "Angles Value:- %f", angles[0]) ;
+			chprintf(bss, " %f", angles[1]) ;
+			chprintf(bss, " %f\r\n", angles[2]) ;
+			chThdSleepMilliseconds(100) ;
+		}
+	}
+#endif	/*CORTEX_USE_FPU */
 	else if((!strcasecmp("--help", argv[0])) || (!strcasecmp("-h", argv[0]))) {
-		chprintf(bss, "Usage: accelerometer [options]\r\nOptions:\r\n") ;
+		chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
 		chprintf(bss, " --help \t| -h\tDisplay this help.\r\n") ;
 		chprintf(bss, " --temp \t| -t\tTemperature Sensor's value.\r\n") ;
 		chprintf(bss, " --accel\t| -a\tAccelerometer's value.\r\n") ;
 		chprintf(bss, " --gyro \t| -g\tGyrometer's value.\r\n") ;
+		chprintf(bss, " --angle\t| -n\tEuler angles value. First pitch, then roll and yaw.\r\n") ;
 	}
 	else {
-		chprintf(bss, "Usage: accelerometer [options]\r\nOptions:\r\n") ;
+		chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
 		chprintf(bss, " --help \t| -h\tDisplay help.\r\n") ;
 		chprintf(bss, " --temp \t| -t\tTemperature Sensor's value.\r\n") ;
 		chprintf(bss, " --accel\t| -a\tAccelerometer's value.\r\n") ;
 		chprintf(bss, " --gyro \t| -g\tGyrometer's value.\r\n") ;
+		chprintf(bss, " --angle\t| -n\tEuler angles value. First pitch, then roll and yaw.\r\n") ;
 	}
 
 }
-#endif	/*PLUTO_USE_ACCELEROMETER */
+#endif	/*PLUTO_USE_IMU */
 
 #if PLUTO_USE_MAGNETOMETER
 void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {

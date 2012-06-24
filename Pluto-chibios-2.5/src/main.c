@@ -36,19 +36,19 @@ int main(void) {
    */
   SD1Init() ;
   chprintf((BaseSequentialStream *)&SD1, "\r\nInitializing...\r\n") ;
-#if PLUTO_USE_ACCELEROMETER || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
+#if PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
   I2CInitialize() ;
-#endif
+#endif	/*PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
   /*
    * Shell manager initialization.
    */
 #if PLUTO_USE_SHELL
   Thread *shelltp = NULL;
   shellInit();
-#endif
+#endif	/*PLUTO_USE_SHELL */
 #if PLUTO_USE_FATFS
   startMMC() ;
-#endif
+#endif	/*PLUTO_USE_FATFS */
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
@@ -62,7 +62,7 @@ int main(void) {
 		   chThdRelease(shelltp);    /* Recovers memory of the previous shell.   */
 		   shelltp = NULL;           /* Triggers spawning of a new shell.        */
 	   }
-#endif
+#endif	/*PLUTO_USE_SHELL */
   }
   return 0;
 }

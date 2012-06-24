@@ -11,8 +11,8 @@
 /*For using MicroSD Card with a FAT filesystem */
 #define PLUTO_USE_FATFS 			FALSE
 
-/*To use the onboard accelerometer */
-#define PLUTO_USE_ACCELEROMETER		TRUE
+/*To use the onboard IMU */
+#define PLUTO_USE_IMU				TRUE
 
 /*To use the onboard barometer */
 #define PLUTO_USE_BAROMETER			TRUE

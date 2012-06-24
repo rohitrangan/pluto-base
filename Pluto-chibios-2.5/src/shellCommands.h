@@ -38,8 +38,8 @@ void cmd_unmount(BaseSequentialStream *bss, int argc, char *argv[]);
 void cmd_tree(BaseSequentialStream *bss, int argc, char *argv[]);
 #endif	/*PLUTO_USE_FATFS */
 
-#if PLUTO_USE_ACCELEROMETER
-void cmd_accelerometer(BaseSequentialStream *bss, int argc, char *argv[]);
+#if PLUTO_USE_IMU
+void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]);
 #endif	/*PLUTO_USE_ACCELEROMETER */
 
 #if PLUTO_USE_MAGNETOMETER
