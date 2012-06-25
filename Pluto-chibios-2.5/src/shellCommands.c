@@ -24,9 +24,9 @@
 const ShellCommand commands[] = {
 	{"mem", cmd_mem},
 	{"threads", cmd_threads},
-#if CORTEX_USE_FPU
+#if CORTEX_USE_FPU && PLUTO_USE_FPUTEST
 	{"fputest", cmd_fputest},
-#endif   /*CORTEX_USE_FPU */
+#endif   /*CORTEX_USE_FPU && PLUTO_USE_FPUTEST */
 #if PLUTO_USE_FATFS
 	{"mount", cmd_mount},
 	{"unmount", cmd_unmount},
@@ -50,7 +50,7 @@ const ShellConfig shell_cfg1 = {
   commands
 };
 
-#if CORTEX_USE_FPU
+#if CORTEX_USE_FPU && PLUTO_USE_FPUTEST
 void cmd_fputest(BaseSequentialStream *bss, int argc, char *argv[]) {
 	float ans = 0.0;
 	if((argc > 3) || (argc == 0)) {
@@ -87,7 +87,7 @@ void cmd_fputest(BaseSequentialStream *bss, int argc, char *argv[]) {
 		chprintf(bss, "The answer is %f\r\n", ans);
 	}
 }
-#endif	/*CORTEX_USE_FPU  */
+#endif	/*CORTEX_USE_FPU && PLUTO_USE_FPUTEST */
 
 void cmd_mem(BaseSequentialStream *bss, int argc, char *argv[]) {
 	size_t n, size;

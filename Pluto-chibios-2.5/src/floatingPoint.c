@@ -7,11 +7,13 @@
 #include<string.h>
 #include<stdlib.h>
 #include<math.h>
-#include<ch.h>
+
+#include "ch.h"
 #include "hal.h"
 #include "chprintf.h"
+#include "plutoconf.h"
 
-#if CORTEX_USE_FPU
+#if CORTEX_USE_FPU && PLUTO_USE_FPUTEST
 float fpuTest(BaseSequentialStream *bss, char *operand1, char oper, char *operand2) {
   float float1 = 0.0, float2 = 0.0, ans = 0.0;
   float1 = atof(operand1);
@@ -43,4 +45,4 @@ float fpuTest(BaseSequentialStream *bss, char *operand1, char oper, char *operan
   }
   return ans;
 }
-#endif /* CORTEX_USE_FPU */
+#endif 	/*CORTEX_USE_FPU && PLUTO_USE_FPUTEST */

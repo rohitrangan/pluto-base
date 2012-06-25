@@ -20,13 +20,17 @@ extern const SPIConfig hs_spicfg ;
 void SPI2Init(void);
 #endif	/*PLUTO_USE_FATFS */
 
-/*Initializes I2C Drivers 1 and 3 */
 #if PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_ACCELEROMETER
+/*Initializes I2C Drivers 1 and 3 */
 void I2CInitialize(void);
+/*Initializes all the sensors on Pluto. The sensors to be
+ *used can be controlled through plutoconf.h
+ */
+void SensorInitialize(void);
 #endif	/*PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_ACCELEROMETER */
 
 #if PLUTO_USE_SCANNER
-void i2cScanner(I2CDriver *FindI2C, char *driverName);
+void i2cScanner(I2CDriver *FindI2C, const char *driverName);
 #endif	/*PLUTO_USE_SCANNER */
 
 /*Initializes SerialDriver1 for Output and Input */

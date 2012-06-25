@@ -18,11 +18,11 @@ extern const ShellCommand commands[] ;
 
 extern const ShellConfig shell_cfg1 ;
 
-#if CORTEX_USE_FPU
+#if CORTEX_USE_FPU && PLUTO_USE_FPUTEST
 float fpuTest(BaseSequentialStream *bss, char *operand1, char oper, char *operand2);
 
 void cmd_fputest(BaseSequentialStream *bss, int argc, char *argv[]);
-#endif	/*CORTEX_USE_FPU */
+#endif	/*CORTEX_USE_FPU && PLUTO_USE_FPUTEST */
 
 void cmd_mem(BaseSequentialStream *bss, int argc, char *argv[]);
 

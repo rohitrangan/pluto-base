@@ -64,7 +64,7 @@ static const I2CConfig i2cfg1 = {
 #endif	/*PLUTO_USE_IMU */
 
 #if PLUTO_USE_SCANNER
-void i2cScanner(I2CDriver *FindI2C, char *driverName) {
+void i2cScanner(I2CDriver *FindI2C, const char *driverName) {
 
 	uint8_t x = 0, txbuf[2], rxbuf[2] ;
 	msg_t messages = 0 ;
@@ -111,11 +111,13 @@ void I2CInitialize(void) {
 	/*To Link PA8 and PC9 to I2C3 function */
 	palSetPadMode(GPIOA, 8,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
 	palSetPadMode(GPIOC, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
+	palSetPadMode(GPIOC, 14, PAL_MODE_INPUT) ;
 
-	chThdSleepMilliseconds(100) ;
+	chThdSleepMilliseconds(10) ;
 #if PLUTO_USE_SCANNER
 	i2cScanner(&I2CD3, "I2C3") ;
 #endif	/*PLUTO_USE_SCANNER */
+
 #endif	/*PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
 
 #if PLUTO_USE_IMU
@@ -125,22 +127,32 @@ void I2CInitialize(void) {
 	palSetPadMode(GPIOB, 8,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;// | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP);// | PAL_STM32_OTYPE_OPENDRAIN);
 	palSetPadMode(GPIOB, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;//PAL_STM32_OTYPE_OPENDRAINN);// | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP);// | PAL_STM32_OTYPE_OPENDRAIN);
 
-	chThdSleepMilliseconds(100) ;
+	chThdSleepMilliseconds(10) ;
 #if PLUTO_USE_SCANNER
 	i2cScanner(&I2CD1, "I2C1") ;
 #endif	/*PLUTO_USE_SCANNER */
-	set_mpu_i2c() ;
+
 #endif	/*PLUTO_USE_IMU */
+
+}
+
+/*Initializes all the sensors on Pluto. The sensors to be
+ *used can be controlled through plutoconf.h
+ */
+void SensorInitialize(void) {
 
 #if PLUTO_USE_MAGNETOMETER
 	/*Set HMC_DRDY pin as input */
-	palSetPadMode(GPIOC, 14, PAL_MODE_INPUT) ;
 	initialize_HMC(AVERAGE4, ODR6, MODE_NORMAL, RANGE_880mGa, OP_MODE_SINGLE) ;
 #endif	/*PLUTO_USE_MAGNETOMETER*/
 
 #if PLUTO_USE_BAROMETER
 	initialize_bmp180(ULTRA_HIGH_RESOLUTION) ;
 #endif	/*PLUTO_USE_BAROMETER */
+
+#if PLUTO_USE_IMU
+	set_mpu_i2c() ;
+#endif	/*PLUTO_USE_ACCELEROMETER */
 
 }
 
@@ -149,12 +161,11 @@ void I2CInitialize(void) {
 void SPI2Init(void) {
 	/*
 	 * Initializes the SPI driver 2. The SPI2 signals are routed as follow:
-	 * PB12 - NSS.
-	 * PB13 - SCK.
-	 * PB14 - MISO.
-	 * PB15 - MOSI.
+	 * PA0  - NSS.
+	 * PB10 - SCK.
+	 * PC2  - MISO.
+	 * PC3  - MOSI.
 	 */
-	spiStart(&SPID2, &hs_spicfg); /* TODO - rrangan do we have todo here or is it taken care of by  mmcObjectInit */
 
 	palSetPad(GPIOA, GPIOA_CS_SPI2);
 	palSetPadMode(GPIOA,GPIOA_CS_SPI2, PAL_MODE_OUTPUT_PUSHPULL); /* Setting Chip Select to PUSHPULL */
