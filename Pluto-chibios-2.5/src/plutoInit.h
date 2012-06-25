@@ -23,10 +23,6 @@ void SPI2Init(void);
 #if PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_ACCELEROMETER
 /*Initializes I2C Drivers 1 and 3 */
 void I2CInitialize(void);
-/*Initializes all the sensors on Pluto. The sensors to be
- *used can be controlled through plutoconf.h
- */
-void SensorInitialize(void);
 #endif	/*PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_ACCELEROMETER */
 
 #if PLUTO_USE_SCANNER

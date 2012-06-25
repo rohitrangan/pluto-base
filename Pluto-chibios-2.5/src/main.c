@@ -38,7 +38,7 @@ int main(void) {
   chprintf((BaseSequentialStream *)&SD1, "\r\nInitializing...\r\n") ;
 #if PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
   I2CInitialize() ;
-  SensorInitialize() ;
+  //SensorInitialize() ;
 #endif	/*PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
   /*
    * Shell manager initialization.

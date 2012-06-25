@@ -111,7 +111,6 @@ void I2CInitialize(void) {
 	/*To Link PA8 and PC9 to I2C3 function */
 	palSetPadMode(GPIOA, 8,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
 	palSetPadMode(GPIOC, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
-	palSetPadMode(GPIOC, 14, PAL_MODE_INPUT) ;
 
 	chThdSleepMilliseconds(10) ;
 #if PLUTO_USE_SCANNER
@@ -119,6 +118,10 @@ void I2CInitialize(void) {
 #endif	/*PLUTO_USE_SCANNER */
 
 #endif	/*PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
+
+#if PLUTO_USE_MAGNETOMETER
+	palSetPadMode(HMC_DRDY_PORT, HMC_DRDY_PIN, PAL_MODE_INPUT) ;
+#endif	/*PLUTO_USE_MAGNETOMETER */
 
 #if PLUTO_USE_IMU
 	i2cStart(&I2CD1, &i2cfg1) ;
@@ -131,28 +134,18 @@ void I2CInitialize(void) {
 #if PLUTO_USE_SCANNER
 	i2cScanner(&I2CD1, "I2C1") ;
 #endif	/*PLUTO_USE_SCANNER */
-
+	set_mpu_i2c() ;
 #endif	/*PLUTO_USE_IMU */
 
-}
-
-/*Initializes all the sensors on Pluto. The sensors to be
- *used can be controlled through plutoconf.h
- */
-void SensorInitialize(void) {
-
 #if PLUTO_USE_MAGNETOMETER
-	/*Set HMC_DRDY pin as input */
 	initialize_HMC(AVERAGE4, ODR6, MODE_NORMAL, RANGE_880mGa, OP_MODE_SINGLE) ;
+	chThdSleepMilliseconds(10) ;
 #endif	/*PLUTO_USE_MAGNETOMETER*/
 
 #if PLUTO_USE_BAROMETER
 	initialize_bmp180(ULTRA_HIGH_RESOLUTION) ;
+	chThdSleepMilliseconds(10) ;
 #endif	/*PLUTO_USE_BAROMETER */
-
-#if PLUTO_USE_IMU
-	set_mpu_i2c() ;
-#endif	/*PLUTO_USE_ACCELEROMETER */
 
 }
 
