@@ -16,6 +16,7 @@
 #include "BMP180.h"
 #include "MPU60X0.h"
 #include "ms4515.h"
+#include "PWMInit.h"
 
 /*Config for USART1 */
 static const SerialConfig usart1 = {
@@ -149,6 +150,13 @@ void I2CInitialize(void) {
 
 }
 
+#if HAL_USE_PWM
+/*Starts PWM */
+void startPWM(void) {
+	initPWM() ;
+}
+#endif	/*HAL_USE_PWM */
+
 /*Initializes the SPI2 Driver */
 #if PLUTO_USE_FATFS
 void SPI2Init(void) {
@@ -160,8 +168,8 @@ void SPI2Init(void) {
 	 * PC3  - MOSI.
 	 */
 
-	palSetPad(GPIOA, GPIOA_CS_SPI2);
 	palSetPadMode(GPIOA,GPIOA_CS_SPI2, PAL_MODE_OUTPUT_PUSHPULL); /* Setting Chip Select to PUSHPULL */
+	palSetPad(GPIOA, GPIOA_CS_SPI2);
 
 	palSetPadMode(GPIOB, 10, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);           /* SCK.     */
 

@@ -8,18 +8,21 @@
 #ifndef IMUDATA_H_
 #define IMUDATA_H_
 
-/*If Mode is 1 then the accelerometer values
- *are read, mode is 2 then gyrometer values
- *are read, if mode is 3 then the temperature
- *value is read. val stores the values of the
- *sensor data.
+#include "ch.h"
+#define ACCEL_DATA		1
+#define GYRO_DATA		2
+#define IMU_TEMP_DATA	3
+/*If Mode is ACCEL_DATA then the accelerometer values
+ *are read, mode is GYRO_DATA then gyrometer values
+ *are read, if mode is TEMP_DATA then the temperature
+ *value is read. val stores the values of the sensor
+ *data.
  */
 void readIMUData(uint8_t mode, int16_t val[3]) ;
 
-/*This function calculates the pitch, roll and
- *yaw. It calls readAccelerometerData inside.
- *The angles are stored in the order pitch,
- *roll and yaw.
+/*This function calculates the pitch, roll and yaw. It
+ *calls readAccelerometerData inside. The angles are
+ *stored in the order pitch, roll and yaw.
  */
 #if CORTEX_USE_FPU
 void eulerAngles(float angles[3]) ;

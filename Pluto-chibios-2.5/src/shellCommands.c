@@ -136,10 +136,12 @@ void cmd_mount(BaseSequentialStream *bss, int argc, char *argv[]) {
 	if(err != FR_OK) {
 		chprintf(bss, "Disk not mounted. Error - %d\r\n", err);
 		mmcDisconnect(&MMCD1);
+		chThdSleepMilliseconds(10);
 	}
 	else {
 		chprintf(bss, "Disk mounted.\r\n");
 		fs_ready = TRUE;
+		chThdSleepMilliseconds(10);
 	}
 }
 
@@ -152,6 +154,7 @@ void cmd_unmount(BaseSequentialStream *bss, int argc, char *argv[]) {
 	mmcDisconnect(&MMCD1);
 	fs_ready = FALSE;
 	chprintf(bss, "Disk unmounted.\r\n");
+	chThdSleepMilliseconds(10);
 }
 
 void cmd_tree(BaseSequentialStream *bss, int argc, char *argv[]) {
@@ -177,8 +180,10 @@ void cmd_tree(BaseSequentialStream *bss, int argc, char *argv[]) {
 			"FS: %lu free clusters, %lu sectors per cluster, %lu bytes free\r\n",
 			clusters, (uint32_t)MMC_FS.csize,
 			clusters * (uint32_t)MMC_FS.csize * (uint32_t)MMC_SECTOR_SIZE);
+	chThdSleepMilliseconds(10);
 	fbuff[0] = 0;
 	err = scan_files(bss, (char *)fbuff);
+	chThdSleepMilliseconds(10);
 }
 #endif	/*PLUTO_USE_FATFS */
 
@@ -210,21 +215,21 @@ void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
 	}
 	if((!strcasecmp("--temp", argv[0])) || (!strcasecmp("-t", argv[0]))) {
 		for(i = 0 ; i < 50 ; i++) {
-			readIMUData(3, data) ;
+			readIMUData(IMU_TEMP_DATA, data) ;
 			chprintf(bss, "Temperature Sensor Value:- %d\r\n", data[0]) ;
 			chThdSleepMilliseconds(100) ;
 		}
 	}
 	else if((!strcasecmp("--accel", argv[0])) || (!strcasecmp("-a", argv[0]))) {
 		for(i = 0 ; i < 50 ; i++) {
-			readIMUData(1, data) ;
+			readIMUData(ACCEL_DATA, data) ;
 			chprintf(bss, "Accelerometer Value:- %d  %d  %d\r\n", data[0], data[1], data[2]) ;
 			chThdSleepMilliseconds(100) ;
 		}
 	}
 	else if((!strcasecmp("--gyro", argv[0])) || (!strcasecmp("-g", argv[0]))) {
 		for(i = 0 ; i < 50 ; i++) {
-			readIMUData(2, data) ;
+			readIMUData(GYRO_DATA, data) ;
 			chprintf(bss, "Gyrometer Value:- %d  %d  %d\r\n", data[0], data[1], data[2]) ;
 			chThdSleepMilliseconds(100) ;
 		}
@@ -320,12 +325,12 @@ void cmd_barometer(BaseSequentialStream *bss, int argc, char *argv[]) {
 	}
 	if((!strcasecmp("--temp", argv[0])) || (!strcasecmp("-t", argv[0]))) {
 		for(i = 0 ; i < 50 ; i++) {
-			chprintf(bss, "Temperature Value:- %D\r\n", readBarometerData(1)) ;
+			chprintf(bss, "Temperature Value:- %D\r\n", readBarometerData(BARO_TEMP_DATA)) ;
 		}
 	}
 	else if((!strcasecmp("--press", argv[0])) || (!strcasecmp("-p", argv[0]))) {
 		for(i = 0 ; i < 50 ; i++) {
-			chprintf(bss, "Pressure Value:- %D\r\n", readBarometerData(2)) ;
+			chprintf(bss, "Pressure Value:- %D\r\n", readBarometerData(PRESSURE_DATA)) ;
 		}
 	}
 	else if((!strcasecmp("--help", argv[0])) || (!strcasecmp("-h", argv[0]))) {

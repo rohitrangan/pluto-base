@@ -27,9 +27,9 @@
 #define PLUTO_USE_SHELL				TRUE
 
 /*To list all the Sensors on board for debugging.(Default should be FALSE) */
-#define PLUTO_USE_SCANNER			TRUE
+#define PLUTO_USE_SCANNER			FALSE
 
 /*To check whether the onboard FPU works */
-#define PLUTO_USE_FPUTEST			TRUE
+#define PLUTO_USE_FPUTEST			FALSE
 
 #endif /* PLUTOCONF_H_ */

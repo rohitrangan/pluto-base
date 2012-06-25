@@ -17,19 +17,24 @@ extern const SPIConfig ls_spicfg ;
 extern const SPIConfig hs_spicfg ;
 
 /*Initializes SPI2 Driver */
-void SPI2Init(void);
+void SPI2Init(void) ;
 #endif	/*PLUTO_USE_FATFS */
 
-#if PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_ACCELEROMETER
+#if PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_IMU
 /*Initializes I2C Drivers 1 and 3 */
-void I2CInitialize(void);
-#endif	/*PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_ACCELEROMETER */
+void I2CInitialize(void) ;
+#endif	/*PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_IMU */
 
 #if PLUTO_USE_SCANNER
-void i2cScanner(I2CDriver *FindI2C, const char *driverName);
+void i2cScanner(I2CDriver *FindI2C, const char *driverName) ;
 #endif	/*PLUTO_USE_SCANNER */
 
+#if HAL_USE_PWM
+/*Starts PWM */
+void startPWM(void) ;
+#endif	/*HAL_USE_PWM */
+
 /*Initializes SerialDriver1 for Output and Input */
-void SD1Init(void);
+void SD1Init(void) ;
 
 #endif /* PLUTOINIT_H_ */

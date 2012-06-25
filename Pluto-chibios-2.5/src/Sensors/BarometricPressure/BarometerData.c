@@ -19,7 +19,8 @@ int32_t readBarometerData(uint8_t mode) {
 	uint8_t bmp_txbuf[2], bmp_rxbuf[3] ;
 	int16_t reg1[8] ;
 	uint16_t reg2[3] ;
-	if(mode == 1) {
+
+	if(mode == BARO_TEMP_DATA) {
 		uint32_t ut ;
 		int32_t x1, x2, b5, tval ;
 		bmp_txbuf[0] = BOSCH_CTL ;
@@ -46,7 +47,7 @@ int32_t readBarometerData(uint8_t mode) {
 	    tval = (b5 + 8) >> 4 ;
 	    return tval ;
 	}
-	else if(mode == 2) {
+	else if(mode == PRESSURE_DATA) {
 		int32_t x1, x2, x3, b3, b5, b6, p, pval ;
 		uint32_t b4, b7, up, ut ;
 

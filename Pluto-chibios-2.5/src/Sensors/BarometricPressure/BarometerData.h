@@ -8,7 +8,11 @@
 #ifndef BAROMETERDATA_H_
 #define BAROMETERDATA_H_
 
+#include "ch.h"
 #include "BMP180.h"
+
+#define BARO_TEMP_DATA	1
+#define	PRESSURE_DATA	2
 
 #define DELAY_PRESSURE		delay_bmp180
 #define DELAY_TEMP			delay_bmp180_temperature

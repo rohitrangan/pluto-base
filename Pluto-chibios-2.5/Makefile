@@ -62,12 +62,15 @@ CHIBIOS = chibios
 
 SENSORDIR = src/Sensors
 
+IODIR = src/IO
+
 include boards/pluto/board.mk
 include ${CHIBIOS}/os/hal/platforms/STM32F4xx/platform.mk
 include ${CHIBIOS}/os/hal/hal.mk
 include ${CHIBIOS}/os/ports/GCC/ARMCMx/STM32F4xx/port.mk
 include ${CHIBIOS}/os/kernel/kernel.mk
 include ${SENSORDIR}/sensors.mk
+include ${IODIR}/io.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
 
 # Define linker script file here
@@ -85,6 +88,7 @@ CSRC = $(PORTSRC) \
        ${CHIBIOS}/os/various/shell.c \
        ${CHIBIOS}/os/various/syscalls.c \
        $(SENSORSRC) \
+       $(IOSRC) \
        $(FATFSSRC) \
        src/fsInit.c \
        src/plutoInit.c \
@@ -122,6 +126,7 @@ ASMSRC = $(PORTASM)
 INCDIR = $(PORTINC) $(KERNINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
          $(SENSORINC) \
+         $(IOINC) \
          ${CHIBIOS}/os/various \
          $(FATFSINC) \
          src/
