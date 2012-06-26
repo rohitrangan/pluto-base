@@ -49,14 +49,30 @@
 #define STM32_CAN2_RX1_HANDLER      CAN2_RX1_IRQHandler
 #define STM32_CAN2_SCE_HANDLER      CAN2_SCE_IRQHandler
 
-#define STM32_CAN1_TX_NUMBER        USB_HP_CAN1_TX_IRQn
-#define STM32_CAN1_RX0_NUMBER       USB_LP_CAN1_RX0_IRQn
+#define STM32_CAN1_TX_NUMBER        CAN1_TX_IRQn
+#define STM32_CAN1_RX0_NUMBER       CAN1_RX0_IRQn
 #define STM32_CAN1_RX1_NUMBER       CAN1_RX1_IRQn
 #define STM32_CAN1_SCE_NUMBER       CAN2_SCE_IRQn
 #define STM32_CAN2_TX_NUMBER        CAN2_TX_IRQn
 #define STM32_CAN2_RX0_NUMBER       CAN2_RX0_IRQn
 #define STM32_CAN2_RX1_NUMBER       CAN2_RX1_IRQn
 #define STM32_CAN2_SCE_NUMBER       CAN2_SCE_IRQn
+
+/*
+ * OTG units.
+ */
+#define STM32_OTG1_HANDLER          OTG_FS_IRQHandler
+#define STM32_OTG2_HANDLER          OTG_HS_IRQHandler
+
+#define STM32_OTG1_NUMBER           OTG_FS_IRQn
+#define STM32_OTG2_NUMBER           OTG_HS_IRQn
+
+/*
+ * SDIO unit.
+ */
+#define STM32_SDIO_HANDLER          SDIO_IRQHandler
+
+#define STM32_SDIO_NUMBER           SDIO_IRQn
 
 /*
  * TIM units.
@@ -78,6 +94,23 @@
 #define STM32_TIM5_NUMBER           TIM5_IRQn
 #define STM32_TIM8_UP_NUMBER        TIM8_UP_TIM13_IRQn
 #define STM32_TIM8_CC_NUMBER        TIM8_CC_IRQn
+
+/*
+ * USART units.
+ */
+#define STM32_USART1_HANDLER        USART1_IRQHandler
+#define STM32_USART2_HANDLER        USART2_IRQHandler
+#define STM32_USART3_HANDLER        USART3_IRQHandler
+#define STM32_UART4_HANDLER         UART4_IRQHandler
+#define STM32_UART5_HANDLER         UART5_IRQHandler
+#define STM32_USART6_HANDLER        USART6_IRQHandler
+
+#define STM32_USART1_NUMBER         USART1_IRQn
+#define STM32_USART2_NUMBER         USART2_IRQn
+#define STM32_USART3_NUMBER         USART3_IRQn
+#define STM32_UART4_NUMBER          UART4_IRQn
+#define STM32_UART5_NUMBER          UART5_IRQn
+#define STM32_USART6_NUMBER         USART6_IRQn
 /** @} */
 
 /*===========================================================================*/

@@ -64,7 +64,7 @@
 #define GPIOA_SPC               5
 #define GPIOA_SDO               6
 #define GPIOA_SDI               7
-#define GPIOA_VBUS_FS           9
+// #define GPIOA_VBUS_FS           9
 #define GPIOA_OTG_FS_ID         10
 #define GPIOA_OTG_FS_DM         11
 #define GPIOA_OTG_FS_DP         12
@@ -131,6 +131,8 @@
  * PA13 - GPIOA_SWDIO           (alternate 0).
  * PA14 - GPIOA_SWCLK           (alternate 0).
  */
+                                     /* PIN_MODE_INPUT(GPIOA_VBUS_FS) |        \ */
+
 #define VAL_GPIOA_MODER             (PIN_MODE_INPUT(GPIOA_CS_SPI2) |         \
                                      PIN_MODE_INPUT(1) |                    \
                                      PIN_MODE_INPUT(2) |                    \
@@ -140,7 +142,6 @@
                                      PIN_MODE_ALTERNATE(GPIOA_SDO) |        \
                                      PIN_MODE_ALTERNATE(GPIOA_SDI) |        \
                                      PIN_MODE_INPUT(8) |                    \
-                                     PIN_MODE_INPUT(GPIOA_VBUS_FS) |        \
                                      PIN_MODE_ALTERNATE(GPIOA_OTG_FS_ID) |  \
                                      PIN_MODE_ALTERNATE(GPIOA_OTG_FS_DM) |  \
                                      PIN_MODE_ALTERNATE(GPIOA_OTG_FS_DP) |  \
@@ -149,6 +150,8 @@
                                      PIN_MODE_ALTERNATE(15))
 #define VAL_GPIOA_OTYPER            0x00000000
 #define VAL_GPIOA_OSPEEDR           0xFFFFFFFF
+                                     /* PIN_PUDR_FLOATING(GPIOA_VBUS_FS) |     \ */
+
 #define VAL_GPIOA_PUPDR             (PIN_PUDR_FLOATING(GPIOA_CS_SPI2) |      \
                                      PIN_PUDR_PULLUP(1) |                   \
                                      PIN_PUDR_PULLUP(2) |                   \
@@ -158,7 +161,6 @@
                                      PIN_PUDR_FLOATING(GPIOA_SDO) |         \
                                      PIN_PUDR_FLOATING(GPIOA_SDI) |         \
                                      PIN_PUDR_PULLUP(8) |                   \
-                                     PIN_PUDR_FLOATING(GPIOA_VBUS_FS) |     \
                                      PIN_PUDR_FLOATING(GPIOA_OTG_FS_ID) |   \
                                      PIN_PUDR_FLOATING(GPIOA_OTG_FS_DM) |   \
                                      PIN_PUDR_FLOATING(GPIOA_OTG_FS_DP) |   \

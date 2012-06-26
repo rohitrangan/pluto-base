@@ -171,9 +171,9 @@ void SPI2Init(void) {
 	palSetPadMode(GPIOA,GPIOA_CS_SPI2, PAL_MODE_OUTPUT_PUSHPULL); /* Setting Chip Select to PUSHPULL */
 	palSetPad(GPIOA, GPIOA_CS_SPI2);
 
-	palSetPadMode(GPIOB, 10, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);           /* SCK.     */
+	palSetPadMode(GPIOB, 10, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);          /* SCK.     */
 
-	palSetPadMode(GPIOC, 2, PAL_MODE_ALTERNATE(5));              /* MISO.    */
+	palSetPadMode(GPIOC, 2, PAL_MODE_ALTERNATE(5));                                      /* MISO.    */
 	palSetPadMode(GPIOC, 3, PAL_MODE_ALTERNATE(5) | PAL_STM32_OSPEED_HIGHEST);           /* MOSI.    */
 }
 #endif	/*PLUTO_USE_FATFS */

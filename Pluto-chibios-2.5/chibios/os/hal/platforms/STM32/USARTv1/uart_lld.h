@@ -49,7 +49,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_UART_USE_USART1) || defined(__DOXYGEN__)
-#define STM32_UART_USE_USART1               TRUE
+#define STM32_UART_USE_USART1               FALSE
 #endif
 
 /**
@@ -58,7 +58,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_UART_USE_USART2) || defined(__DOXYGEN__)
-#define STM32_UART_USE_USART2               TRUE
+#define STM32_UART_USE_USART2               FALSE
 #endif
 
 /**
@@ -67,7 +67,7 @@
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_UART_USE_USART3) || defined(__DOXYGEN__)
-#define STM32_UART_USE_USART3               TRUE
+#define STM32_UART_USE_USART3               FALSE
 #endif
 
 /**
@@ -213,6 +213,36 @@
 #if !STM32_UART_USE_USART1 && !STM32_UART_USE_USART2 &&                     \
     !STM32_UART_USE_USART3
 #error "UART driver activated but no USART/UART peripheral assigned"
+#endif
+
+#if STM32_UART_USE_USART1 &&                                                \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART1_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to USART1"
+#endif
+
+#if STM32_UART_USE_USART2 &&                                                \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART2_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to USART2"
+#endif
+
+#if STM32_UART_USE_USART3 &&                                                \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_UART_USART3_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to USART3"
+#endif
+
+#if STM32_UART_USE_USART1 &&                                                \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_UART_USART1_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to USART1"
+#endif
+
+#if STM32_UART_USE_USART2 &&                                                \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_UART_USART2_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to USART2"
+#endif
+
+#if STM32_UART_USE_USART3 &&                                                \
+    !STM32_DMA_IS_VALID_PRIORITY(STM32_UART_USART3_DMA_PRIORITY)
+#error "Invalid DMA priority assigned to USART3"
 #endif
 
 #if STM32_UART_USE_USART1 &&                                                \
