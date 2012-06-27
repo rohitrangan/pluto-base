@@ -9,7 +9,7 @@
 #define PLUTOCONF_H_
 
 /*For using MicroSD Card with a FAT filesystem */
-#define PLUTO_USE_FATFS 			TRUE
+#define PLUTO_USE_FATFS 			FALSE
 
 /*To use the onboard IMU */
 #define PLUTO_USE_IMU				TRUE
@@ -30,6 +30,6 @@
 #define PLUTO_USE_SCANNER			FALSE
 
 /*To check whether the onboard FPU works */
-#define PLUTO_USE_FPUTEST			FALSE
+#define PLUTO_USE_FPUTEST			TRUE
 
 #endif /* PLUTOCONF_H_ */

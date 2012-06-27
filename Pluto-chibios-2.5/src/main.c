@@ -14,6 +14,8 @@
 #include "chprintf.h"
 #include "plutoInit.h"
 #include "shellCommands.h"
+#include "IMUData.h"
+#include "PWMInit.h"
 
 /*
  * Application entry point.
@@ -43,7 +45,7 @@ int main(void) {
 #endif	/*PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
 
 #if HAL_USE_PWM
-	startPWM() ;
+	initPWM() ;
 	chThdSleepMilliseconds(10) ;
 #endif	/*HAL_USE_PWM */
 
@@ -62,15 +64,28 @@ int main(void) {
   	/*
   	 * Normal main() thread activity.
   	 */
+  	uint8_t i = 0 ;
   	while(TRUE) {
 #if PLUTO_USE_SHELL
   		if(!shelltp)
   			shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO) ;
-  		else if (chThdTerminated(shelltp)) {
+  		else if(chThdTerminated(shelltp)) {
   			chThdRelease(shelltp) ;    /* Recovers memory of the previous shell.   */
-  			shelltp = NULL ;           /* Triggers spawning of a new shell.        */
+  			shelltp = NULL ;		   /* Triggers spawning of a new shell.        */
+  			i++ ;
   		}
 #endif	/*PLUTO_USE_SHELL */
+
+#if CORTEX_USE_FPU
+  		/*if(!i) {
+  			float angle[3] ;
+  			eulerAngles(angle) ;
+  			chprintf((BaseSequentialStream *)&SD1, "%f ", angle[0]) ;
+  			chprintf((BaseSequentialStream *)&SD1, "%f\r\n", angle[1]) ;
+  			chThdSleepMilliseconds(100) ;
+  		}*/
+#endif	/*CORTEX_USE_FPU  */
   	}
+
   	return 0;
 }

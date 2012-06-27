@@ -29,11 +29,6 @@ void I2CInitialize(void) ;
 void i2cScanner(I2CDriver *FindI2C, const char *driverName) ;
 #endif	/*PLUTO_USE_SCANNER */
 
-#if HAL_USE_PWM
-/*Starts PWM */
-void startPWM(void) ;
-#endif	/*HAL_USE_PWM */
-
 /*Initializes SerialDriver1 for Output and Input */
 void SD1Init(void) ;
 

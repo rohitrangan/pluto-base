@@ -8,6 +8,15 @@
 #ifndef PWMINIT_H_
 #define PWMINIT_H_
 
+/*The definition of the servos and which pins they are mapped to.
+ *
+ *SERVO1 (PB5 ) --> Timer 3 Channel 2 (Alternate Function 2)
+ *SERVO2 (PA10) --> Timer 1 Channel 3 (Alternate Function 1)
+ *SERVO3 (PC8 ) --> Timer 8 Channel 3 (Alternate Function 3)
+ *SERVO4 (PB11) --> Timer 2 Channel 4 (Alternate Function 1)
+ *SERVO5 (PB1 ) --> Timer 3 Channel 4 (Alternate Function 2)
+ *SERVO6 (PB0 ) --> Timer 3 Channel 3 (Alternate Function 2)
+ */
 #define SERVO1_PORT			GPIOB
 #define SERVO1_PIN			5
 #define SERVO2_PORT			GPIOA
@@ -24,12 +33,21 @@
 #define PWM_CLK_FREQUENCY			1000000 /* Clock Frequency of PWM Timer. Higher Frequency better resolution. 1000000 = 1MHz */
 #define PWM_PERIOD					20000	/* Time Period of PWM Cycle. 20000 = 20 ms with PWM_Clock_Frequency = 1 MHz */
 
-#define SERVO1		2
-#define SERVO2		3
-#define SERVO3		3
-#define SERVO4		2
-#define SERVO5		2
-#define SERVO6		1
+/*The channels on which the PWM output will be found.
+ *
+ *SERVO1 --> Channel 2
+ *SERVO2 --> Channel 3
+ *SERVO3 --> Channel 3
+ *SERVO4 --> Channel 4
+ *SERVO5 --> Channel 4
+ *SERVO6 --> Channel 3
+ */
+#define SERVO1		1
+#define SERVO2		2
+#define SERVO3		2
+#define SERVO4		3
+#define SERVO5		3
+#define SERVO6		2
 
 
 void initPWM(void) ;

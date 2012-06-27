@@ -9,9 +9,23 @@
 #define IMUDATA_H_
 
 #include "ch.h"
+
+/*To get data from the different sensors on the IMU.
+ */
 #define ACCEL_DATA		1
 #define GYRO_DATA		2
 #define IMU_TEMP_DATA	3
+
+/*The sensitivities of the Acclerometer and the Gyro.
+ */
+#define GYRO_XSENS	131.0f
+#define GYRO_YSENS 	131.0f
+#define GYRO_ZSENS 	131.0f
+
+#define ACCEL_XSENS 16384
+#define ACCEL_YSENS 16384
+#define ACCEL_ZSENS 16384
+
 /*If Mode is ACCEL_DATA then the accelerometer values
  *are read, mode is GYRO_DATA then gyrometer values
  *are read, if mode is TEMP_DATA then the temperature

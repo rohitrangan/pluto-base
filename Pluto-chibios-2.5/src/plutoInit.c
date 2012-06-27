@@ -150,13 +150,6 @@ void I2CInitialize(void) {
 
 }
 
-#if HAL_USE_PWM
-/*Starts PWM */
-void startPWM(void) {
-	initPWM() ;
-}
-#endif	/*HAL_USE_PWM */
-
 /*Initializes the SPI2 Driver */
 #if PLUTO_USE_FATFS
 void SPI2Init(void) {

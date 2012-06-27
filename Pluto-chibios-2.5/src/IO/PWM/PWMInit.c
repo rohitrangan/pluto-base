@@ -82,13 +82,12 @@ static PWMConfig pwmcfg8 = {
 
 /*
  * This function initializes Servo Output Pins and Connects them to PMW outputs.
- * SERVO1 (PB0)  --> Timer 3 Channel 3 (Alternate Function 2)
- * SERVO2 (PB1)  --> Timer 3 Channel 4 (Alternate Function 2)
- * SERVO3 (PB11) --> Timer 2 Channel 4 (Alternate Function 1)
- * SERVO4 (PC8)  --> Timer 8 Channel 3 (Alternate Function 3)
- * SERVO5 (PA10) --> Timer 1 Channel 3 (Alternate Function 1)
- * SERVO6 (PB5)  --> Timer 3 Channel 2 (Alternate Function 2)
- *
+ * SERVO1 (PB5 ) --> Timer 3 Channel 2 (Alternate Function 2)
+ * SERVO2 (PA10) --> Timer 1 Channel 3 (Alternate Function 1)
+ * SERVO3 (PC8 ) --> Timer 8 Channel 3 (Alternate Function 3)
+ * SERVO4 (PB11) --> Timer 2 Channel 4 (Alternate Function 1)
+ * SERVO5 (PB1 ) --> Timer 3 Channel 4 (Alternate Function 2)
+ * SERVO6 (PB0 ) --> Timer 3 Channel 3 (Alternate Function 2)
  */
 
 void initPWM(void){
@@ -97,14 +96,14 @@ void initPWM(void){
 	 *Start PWM1 function associated with Timer 1.
 	 */
 	pwmStart(&PWMD1, &pwmcfg1) ;
-	palSetPadMode(SERVO5_PORT, SERVO5_PIN, PAL_MODE_ALTERNATE(1)) ;
+	palSetPadMode(SERVO2_PORT, SERVO2_PIN, PAL_MODE_ALTERNATE(1)) ;
 	chThdSleepMilliseconds(10) ;
 
 	/*
 	 * Start PWM2 function associated with Timer 2.
 	 */
 	pwmStart(&PWMD2, &pwmcfg2) ;
-	palSetPadMode(SERVO3_PORT, SERVO3_PIN, PAL_MODE_ALTERNATE(1)) ;
+	palSetPadMode(SERVO4_PORT, SERVO4_PIN, PAL_MODE_ALTERNATE(1)) ;
 	chThdSleepMilliseconds(10) ;
 
 	/*
@@ -112,29 +111,29 @@ void initPWM(void){
 	 */
 //	pwmStart(&PWMD3, &pwmcfg3) ;
 //	palSetPadMode(SERVO1_PORT, SERVO1_PIN, PAL_MODE_ALTERNATE(2)) ;
-//	palSetPadMode(SERVO2_PORT, SERVO2_PIN, PAL_MODE_ALTERNATE(2)) ;
+//	palSetPadMode(SERVO5_PORT, SERVO5_PIN, PAL_MODE_ALTERNATE(2)) ;
 //	palSetPadMode(SERVO6_PORT, SERVO6_PIN, PAL_MODE_ALTERNATE(2)) ;
 
 	/*
 	 * Start PWM8 function associated with Timer 8.
 	 */
 	pwmStart(&PWMD8, &pwmcfg8) ;
-	palSetPadMode(SERVO4_PORT, SERVO4_PIN, PAL_MODE_ALTERNATE(3)) ;
+	palSetPadMode(SERVO3_PORT, SERVO3_PIN, PAL_MODE_ALTERNATE(3)) ;
 	chThdSleepMilliseconds(10) ;
 
 #ifdef PWM_DEBUG
 	/*PA10 -> CH3. For Debugging Only. Servo5 PWM = 1.8 ms */
-	pwmEnableChannelI(&PWMD1, SERVO5, PWM_FRACTION_TO_WIDTH(&PWMD1, PWM_PERIOD, 1800 )) ;
+	pwmEnableChannelI(&PWMD1, SERVO2, PWM_FRACTION_TO_WIDTH(&PWMD1, PWM_PERIOD, 1800)) ;
 
 	/*PB11 -> CH4. For Debugging only. Servo3 PWM = 1.4 ms */
-	pwmEnableChannelI(&PWMD2, SERVO3, PWM_FRACTION_TO_WIDTH(&PWMD2, PWM_PERIOD, 1400 )) ;
+	pwmEnableChannelI(&PWMD2, SERVO4, PWM_FRACTION_TO_WIDTH(&PWMD2, PWM_PERIOD, 1400)) ;
 
 	/*PC8  -> CH4. For Debugging only. Servo4 PWM = 1.6 ms */
-	pwmEnableChannelI(&PWMD8, SERVO4, PWM_FRACTION_TO_WIDTH(&PWMD8, PWM_PERIOD, 1600 )) ;
+	pwmEnableChannelI(&PWMD8, SERVO3, PWM_FRACTION_TO_WIDTH(&PWMD8, PWM_PERIOD, 1600)) ;
 
-	//pwmEnableChannelI(&PWMD3, SERVO6, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, 2000 )) ; /*PB5 -> CH2. For Debugging Only. Servo6 PWM = 2.0 ms  */
-	//pwmEnableChannelI(&PWMD3, SERVO1, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, 1000 )) ; /*PB0 -> CH3. For Debugging Only. Servo1 PWM = 1.0 ms  */
-	//pwmEnableChannelI(&PWMD3, SERVO2, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, 1200 )) ; /*PB1 -> CH4. For Debugging Only. Servo2 PWM = 1.2 ms  */
+	//pwmEnableChannelI(&PWMD3, SERVO1, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, 2000)) ; /*PB5 -> CH2. For Debugging Only. Servo6 PWM = 2.0 ms  */
+	//pwmEnableChannelI(&PWMD3, SERVO5, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, 1000)) ; /*PB1 -> CH3. For Debugging Only. Servo1 PWM = 1.0 ms  */
+	//pwmEnableChannelI(&PWMD3, SERVO6, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, 1200)) ; /*PB0 -> CH4. For Debugging Only. Servo2 PWM = 1.2 ms  */
 #endif
 
 }
