@@ -52,15 +52,6 @@ void initialize_HMC(uint8_t average, uint8_t ODR, uint8_t Mode, uint8_t Gain, ui
 	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0);
 	i2cReleaseBus(&I2C_HMC) ;
 
-/*	if(Gain == 0)hmc_range = 0.73;
-	if(Gain == 1)hmc_range = 0.92;
-	if(Gain == 2)hmc_range = 1.22;
-	if(Gain == 3)hmc_range = 1.52;
-	if(Gain == 4)hmc_range = 2.27;
-	if(Gain == 5)hmc_range = 2.56;
-	if(Gain == 6)hmc_range = 3.03;
-	if(Gain == 7)hmc_range = 4.35;
-*/
 	if(Gain == 0)
 		hmc_range = 730;
 	if(Gain == 1)

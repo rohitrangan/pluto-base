@@ -278,6 +278,7 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
     chprintf(bss, " --help \t| -h\tDisplay help.\r\n") ;
     chprintf(bss, " --raw  \t| -r\tDisplay raw data.\r\n") ;
     chprintf(bss, " --tesla\t| -t\tDisplay value in nanoTesla.\r\n") ;
+    chprintf(bss, " --head \t| -a\tDisplay heading in degrees.\r\n") ;
     return ;
   }
   if((!strcasecmp(argv[0], "--raw")) || (!strcasecmp(argv[0], "-r"))) {
@@ -290,15 +291,26 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
   else if((!strcasecmp(argv[0], "--tesla")) || (!strcasecmp(argv[0], "-t"))) {
     for(i = 0 ; i < 50 ; i++) {
       readMagnetometerData(data) ;
-      chprintf(bss, "Magnetometer Value:- %D %D %D\r\n", (data[0] * RANGE / 10), (data[1] * RANGE / 10), (data[2] * RANGE / 10)) ;
+      chprintf(bss, "Magnetometer Value:- %D %D %D\r\n", (data[0] * RANGE), (data[1] * RANGE), (data[2] * RANGE)) ;
       chThdSleepMilliseconds(100) ;
     }
   }
+#if CORTEX_USE_FPU
+  else if((!strcasecmp(argv[0], "--head")) || (!strcasecmp(argv[0], "-a"))) {
+	float heading ;
+    for(i = 0 ; i < 50 ; i++) {
+    	heading = getHeading() ;
+    	chprintf(bss, "Heading :- %f\r\n", heading) ;
+    	chThdSleepMilliseconds(100) ;
+    }
+  }
+#endif	/*CORTEX_USE_FPU */
   else if((!strcasecmp(argv[0], "--help")) || (!strcasecmp(argv[0], "-h"))) {
     chprintf(bss, "Usage: magnetometer [options]\r\nOptions:\r\n") ;
     chprintf(bss, " --help \t| -h\tDisplay this help.\r\n") ;
     chprintf(bss, " --raw  \t| -r\tDisplay raw data.\r\n") ;
     chprintf(bss, " --tesla\t| -t\tDisplay value in nanoTesla.\r\n") ;
+    chprintf(bss, " --head \t| -a\tDisplay heading in degrees.\r\n") ;
     return ;
   }
   else {
@@ -306,6 +318,7 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
     chprintf(bss, " --help \t| -h\tDisplay help.\r\n") ;
     chprintf(bss, " --raw  \t| -r\tDisplay raw data.\r\n") ;
     chprintf(bss, " --tesla\t| -t\tDisplay value in nanoTesla.\r\n") ;
+    chprintf(bss, " --head \t| -a\tDisplay heading in degrees.\r\n") ;
     return ;
   }
 
