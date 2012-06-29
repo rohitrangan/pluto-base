@@ -397,7 +397,7 @@
 /**
  * @brief   Debug option, trace buffer.
  * @details If enabled then the context switch circular trace buffer is
- *          activated.
+ *          activated.CORTEX_USE_FPU
  *
  * @note    The default is @p FALSE.
  */

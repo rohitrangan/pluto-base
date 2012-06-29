@@ -16,6 +16,7 @@
 #include "shellCommands.h"
 #include "IMUData.h"
 #include "PWMInit.h"
+#include "dcm_update.h"
 
 /*
  * Application entry point.
@@ -64,7 +65,9 @@ int main(void) {
   	/*
   	 * Normal main() thread activity.
   	 */
-  	uint8_t i = 0 ;
+
+  	start_thread((BaseSequentialStream *)&SD1);
+
   	while(TRUE) {
 #if PLUTO_USE_SHELL
   		if(!shelltp)
@@ -72,7 +75,6 @@ int main(void) {
   		else if(chThdTerminated(shelltp)) {
   			chThdRelease(shelltp) ;    /* Recovers memory of the previous shell.   */
   			shelltp = NULL ;		   /* Triggers spawning of a new shell.        */
-  			i++ ;
   		}
 #endif	/*PLUTO_USE_SHELL */
 

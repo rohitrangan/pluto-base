@@ -64,6 +64,8 @@ SENSORDIR = src/Sensors
 
 IODIR = src/IO
 
+DCMDIR = src/DCM
+
 include boards/pluto/board.mk
 include ${CHIBIOS}/os/hal/platforms/STM32F4xx/platform.mk
 include ${CHIBIOS}/os/hal/hal.mk
@@ -72,6 +74,7 @@ include ${CHIBIOS}/os/kernel/kernel.mk
 include ${SENSORDIR}/sensors.mk
 include ${IODIR}/io.mk
 include $(CHIBIOS)/os/various/fatfs_bindings/fatfs.mk
+include ${DCMDIR}/dcm.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/STM32F407xG.ld
@@ -90,6 +93,7 @@ CSRC = $(PORTSRC) \
        $(SENSORSRC) \
        $(IOSRC) \
        $(FATFSSRC) \
+       $(DCMSRC) \
        src/fsInit.c \
        src/plutoInit.c \
        src/shellCommands.c \
@@ -129,6 +133,8 @@ INCDIR = $(PORTINC) $(KERNINC) \
          $(IOINC) \
          ${CHIBIOS}/os/various \
          $(FATFSINC) \
+         $(DCMINC) \
+         src/mavlink \
          src/
          
 #
