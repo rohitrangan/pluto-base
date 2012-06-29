@@ -22,9 +22,9 @@
 #define GYRO_YSENS 	131.0f
 #define GYRO_ZSENS 	131.0f
 
-#define ACCEL_XSENS 16384
-#define ACCEL_YSENS 16384
-#define ACCEL_ZSENS 16384
+#define ACCEL_XSENS 8192
+#define ACCEL_YSENS 8192
+#define ACCEL_ZSENS 8192
 
 /*If Mode is ACCEL_DATA then the accelerometer values
  *are read, mode is GYRO_DATA then gyrometer values

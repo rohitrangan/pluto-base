@@ -16,4 +16,14 @@
  */
 void readMagnetometerData(int16_t val[3]) ;
 
+#if CORTEX_USE_FPU
+/*Returns the heading of the board in degrees.
+ *000 -> North.
+ *090 -> East.
+ *180 -> South.
+ *270 -> West.
+ */
+float getHeading(void) ;
+#endif	/*CORTEX_USE_FPU */
+
 #endif /*MAGNETOMETERDATA_H_ */
