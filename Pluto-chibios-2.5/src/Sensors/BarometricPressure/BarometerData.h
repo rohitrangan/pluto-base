@@ -11,8 +11,11 @@
 #include "ch.h"
 #include "BMP180.h"
 
-#define BARO_TEMP_DATA	1
-#define	PRESSURE_DATA	2
+#define BARO_TEMP_DATA		1
+#define	BARO_PRESSURE_DATA	2
+
+#define EXPONENT			0.190294957f
+#define SEA_LEVEL_PRESSURE	101325.0f
 
 #define DELAY_PRESSURE		delay_bmp180
 #define DELAY_TEMP			delay_bmp180_temperature
@@ -20,10 +23,15 @@
 #define OSS					oss
 
 /*If mode is 1, the function returns the temperature value
- *in 0.1 degrees Celsius. If mode is 2, the function returns
+ *in degrees Celsius. If mode is 2, the function returns
  *the pressure value in Pascals. No sleeps need to be given
  *when calling this function.
  */
-int32_t readBarometerData(uint8_t mode) ;
+float readBarometerData(uint8_t mode) ;
+
+/*This function returns the absolute altitude above sea level
+ *in meters.
+ */
+float getAltitude(void) ;
 
 #endif	/*BAROMETERDATA_H_ */

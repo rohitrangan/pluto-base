@@ -22,9 +22,9 @@
 #define GYRO_YSENS 	131.0f
 #define GYRO_ZSENS 	131.0f
 
-#define ACCEL_XSENS 8192
-#define ACCEL_YSENS 8192
-#define ACCEL_ZSENS 8192
+#define ACCEL_XSENS 8192.0f
+#define ACCEL_YSENS 8192.0f
+#define ACCEL_ZSENS 8192.0f
 
 /*If Mode is ACCEL_DATA then the accelerometer values
  *are read, mode is GYRO_DATA then gyrometer values
@@ -32,14 +32,12 @@
  *value is read. val stores the values of the sensor
  *data.
  */
-void readIMUData(uint8_t mode, int16_t val[3]) ;
+void readIMUData(uint8_t mode, float val[3]) ;
 
 /*This function calculates the pitch, roll and yaw. It
  *calls readAccelerometerData inside. The angles are
  *stored in the order pitch, roll and yaw.
  */
-#if CORTEX_USE_FPU
 void eulerAngles(float angles[3]) ;
-#endif	/*CORTEX_USE_FPU */
 
 #endif	/*IMUDATA_H_ */

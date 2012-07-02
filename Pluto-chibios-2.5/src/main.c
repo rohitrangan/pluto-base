@@ -10,13 +10,15 @@
 #include "ch.h"
 #include "hal.h"
 #include "shell.h"
-#include "fsInit.h"
 #include "chprintf.h"
-#include "plutoInit.h"
-#include "shellCommands.h"
-#include "IMUData.h"
+
+#include "fsInit.h"
 #include "PWMInit.h"
+#include "IMUData.h"
+#include "PWMEnable.h"
+#include "plutoInit.h"
 #include "dcm_update.h"
+#include "shellCommands.h"
 
 /*
  * Application entry point.
@@ -48,6 +50,7 @@ int main(void) {
 #if HAL_USE_PWM
 	initPWM() ;
 	chThdSleepMilliseconds(10) ;
+	startPWMThread() ;
 #endif	/*HAL_USE_PWM */
 
 #if PLUTO_USE_FATFS
@@ -62,11 +65,7 @@ int main(void) {
   	shellInit() ;
 #endif	/*PLUTO_USE_SHELL */
 
-  	/*
-  	 * Normal main() thread activity.
-  	 */
-
-  	start_thread((BaseSequentialStream *)&SD1);
+  	//startDCMThread((BaseSequentialStream *)&SD1) ;
 
   	while(TRUE) {
 #if PLUTO_USE_SHELL
@@ -77,16 +76,6 @@ int main(void) {
   			shelltp = NULL ;		   /* Triggers spawning of a new shell.        */
   		}
 #endif	/*PLUTO_USE_SHELL */
-
-#if CORTEX_USE_FPU
-  		/*if(!i) {
-  			float angle[3] ;
-  			eulerAngles(angle) ;
-  			chprintf((BaseSequentialStream *)&SD1, "%f ", angle[0]) ;
-  			chprintf((BaseSequentialStream *)&SD1, "%f\r\n", angle[1]) ;
-  			chThdSleepMilliseconds(100) ;
-  		}*/
-#endif	/*CORTEX_USE_FPU  */
   	}
 
   	return 0;

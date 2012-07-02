@@ -17,18 +17,17 @@
 #define Servo6Set(angle) {ServoSetAngle(6, angle);}
 #define Servo7Set(angle) {ServoSetAngle(7, angle);}
 
-
+#if HAL_USE_PWM
 struct ServoConfig{
   PWMDriver     *pwmp;
   pwmchannel_t  pwmchannel; // what channel use servo. Enumeration from 0
 };
 typedef struct ServoConfig ServoConfig;
-
+#endif	/*HAL_USE_PWM */
 
 void ServoInit(void);
 void ServoNeutral(void);
 void ServoSetAngle(uint16_t n, uint8_t angle);
 void ServoCarThrottleSet(uint8_t angle);
-
 
 #endif /* SERVO_H_ */

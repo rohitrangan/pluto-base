@@ -1,13 +1,14 @@
 /*Created By - Rohit Rangan
  *Created On - 25-06-2012
  *
- *This file contains all the functions to start
+ *This file contains all the functions to initialize
  *the PWM driver.
  */
 
 #ifndef PWMINIT_H_
 #define PWMINIT_H_
 
+#if HAL_USE_PWM
 /*The definition of the servos and which pins they are mapped to.
  *
  *SERVO1 (PB5 ) --> Timer 3 Channel 2 (Alternate Function 2)
@@ -52,4 +53,6 @@
 
 void initPWM(void) ;
 
-#endif /* PWMINIT_H_ */
+#endif 	/*HAL_USE_PWM */
+
+#endif 	/* PWMINIT_H_ */

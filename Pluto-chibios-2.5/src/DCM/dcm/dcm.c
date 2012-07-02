@@ -12,8 +12,8 @@
 #include "chprintf.h"
 
 #include "dcm.h"
-#include "vector3d.h"
 #include "param.h"
+#include "vector3d.h"
 
 /*
 Output variables are:

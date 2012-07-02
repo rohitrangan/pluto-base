@@ -9,9 +9,8 @@
 #include "hmc5883.h"
 #include "chprintf.h"
 
-uint8_t hmc_txbuf[20], hmc_rxbuf[20];
-int32_t hmc_range = 0;
-//float exp_float = 10.2;
+uint8_t hmc_txbuf[20], hmc_rxbuf[20] ;
+float hmc_range = 0.0 ;
 
 /*
  * average = No. of samples to be average per measurement
@@ -53,21 +52,21 @@ void initialize_HMC(uint8_t average, uint8_t ODR, uint8_t Mode, uint8_t Gain, ui
 	i2cReleaseBus(&I2C_HMC) ;
 
 	if(Gain == 0)
-		hmc_range = 730;
+		hmc_range = 0.73;
 	if(Gain == 1)
-		hmc_range = 920;
+		hmc_range = 0.92;
 	if(Gain == 2)
-		hmc_range = 1220;
+		hmc_range = 1.22;
 	if(Gain == 3)
-		hmc_range = 1520;
+		hmc_range = 1.52;
 	if(Gain == 4)
-		hmc_range = 2270;
+		hmc_range = 2.27;
 	if(Gain == 5)
-		hmc_range = 2560;
+		hmc_range = 2.56;
 	if(Gain == 6)
-		hmc_range = 3030;
+		hmc_range = 3.03;
 	if(Gain == 7)
-		hmc_range = 4350;
+		hmc_range = 4.35;
 
 }
 

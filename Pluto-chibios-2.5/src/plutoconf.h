@@ -21,7 +21,7 @@
 #define PLUTO_USE_MAGNETOMETER		TRUE
 
 /*To use the onboard pressure transducer */
-#define PLUTO_USE_TRANSDUCER		FALSE
+#define PLUTO_USE_DIFFP				FALSE
 
 /*To use the shell for carrying out commands (DO NOT DISABLE) */
 #define PLUTO_USE_SHELL				TRUE
@@ -30,6 +30,6 @@
 #define PLUTO_USE_SCANNER			FALSE
 
 /*To check whether the onboard FPU works */
-#define PLUTO_USE_FPUTEST			TRUE
+#define PLUTO_USE_FPUTEST			FALSE
 
 #endif /* PLUTOCONF_H_ */

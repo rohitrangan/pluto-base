@@ -37,8 +37,5 @@ extern uint8_t oss, measurement_mode ;
 
 void initialize_bmp180(uint8_t operating_mode);
 void read_bmp180_coefficient(int16_t reg1[8], uint16_t reg2[3]);
-void read_bmp180_temperature(void);
-void read_bmp180_pressure(void);
-void bmp180_calc(int state);
 
 #endif /* BMP180_H_ */

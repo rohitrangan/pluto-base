@@ -8,7 +8,7 @@ SENSORSRC = ${SENSORDIR}/IMU/hld/MPU60X0.c \
 	    	${SENSORDIR}/BarometricPressure/BarometerData.c \
 	    	${SENSORDIR}/Magnetometer/hld/hmc5883.c \
 	    	${SENSORDIR}/Magnetometer/MagnetometerData.c \
-	    	${SENSORDIR}/PressureTransducer/hld/ms4515.c
+	    	${SENSORDIR}/DifferentialPressure/hld/ms4515.c
 			
 # Include Directories.
 
@@ -18,5 +18,5 @@ SENSORINC = ${SENSORDIR}/IMU \
 	    	${SENSORDIR}/BarometricPressure/hld \
 	    	${SENSORDIR}/Magnetometer/ \
 	    	${SENSORDIR}/Magnetometer/hld \
-	    	${SENSORDIR}/PressureTransducer/ \
-	    	${SENSORDIR}/PressureTransducer/hld
+	    	${SENSORDIR}/DifferentialPressure/ \
+	    	${SENSORDIR}/DifferentialPressure/hld

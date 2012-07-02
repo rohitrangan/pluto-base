@@ -9,6 +9,6 @@
 #define DCM_UPDATE_H_
 
 float calc_gyro_rate(int16_t raw, float sens);
-void start_thread(BaseSequentialStream *bss);
+void startDCMThread(BaseSequentialStream *bss);
 
 #endif /* DCM_UPDATE_H_ */

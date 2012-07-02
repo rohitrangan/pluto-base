@@ -4,6 +4,7 @@
  *This file contains the functions to get data from
  *the barometer.
  */
+#include<math.h>
 
 #include "ch.h"
 #include "hal.h"
@@ -11,11 +12,11 @@
 #include "BarometerData.h"
 
 /*If mode is 1, the function returns the temperature value
- *in 0.1 degrees Celsius. If mode is 2, the function returns
+ *in degrees Celsius. If mode is 2, the function returns
  *the pressure value in Pascals. No sleeps need to be given
  *when calling this function.
  */
-int32_t readBarometerData(uint8_t mode) {
+float readBarometerData(uint8_t mode) {
 	uint8_t bmp_txbuf[2], bmp_rxbuf[3] ;
 	int16_t reg1[8] ;
 	uint16_t reg2[3] ;
@@ -45,9 +46,9 @@ int32_t readBarometerData(uint8_t mode) {
 	    x2 = ((int32_t)reg1[6] << 11) / (x1 + reg1[7]) ;
 	    b5 = x1 + x2 ;
 	    tval = (b5 + 8) >> 4 ;
-	    return tval ;
+	    return ((float)tval / 10.0) ;
 	}
-	else if(mode == PRESSURE_DATA) {
+	else if(mode == BARO_PRESSURE_DATA) {
 		int32_t x1, x2, x3, b3, b5, b6, p, pval ;
 		uint32_t b4, b7, up, ut ;
 
@@ -117,10 +118,18 @@ int32_t readBarometerData(uint8_t mode) {
 	    x1 = (x1 * 3038) >> 16 ;
 	    x2 = (-7357 * p) >> 16 ;
 	    pval = p + ((x1 + x2 + 3791) >> 4) ;
-	    return pval ;
+	    return ((float)pval * 1.0) ;
 	}
 	else {
-		return 0 ;
+		return 0.0 ;
 	}
+}
+
+/*This function returns the absolute altitude above sea level
+ *in meters.
+ */
+float getAltitude(void) {
+	float pressure = readBarometerData(BARO_PRESSURE_DATA) ;
+	return (44330.0 * (1 - (pow((pressure / SEA_LEVEL_PRESSURE), EXPONENT)))) ;
 }
 

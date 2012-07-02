@@ -9,11 +9,12 @@
 #include "ch.h"
 #include "hal.h"
 #include "hmc5883.h"
+#include "IMUData.h"
+#include "MagnetometerData.h"
 
 /*The raw values are stored in val. To convert to nano Tesla,
- *multiply val[i] by HMC_RANGE_CONVERT and divide by 10.
+ *multiply val[i] by MAG_RANGE.
  */
-
 void readMagnetometerData(int16_t val[3]) {
 	uint8_t hmc_txbuf[2], hmc_rxbuf[6] ;
 	/*Send Single Measurement query. Write 0x01 to MODE Register */
@@ -40,7 +41,6 @@ void readMagnetometerData(int16_t val[3]) {
 	val[2] = (hmc_rxbuf[4] << 8) + hmc_rxbuf[5] ;
 }
 
-#if CORTEX_USE_FPU
 /*Returns the heading of the board in degrees.
  *000 -> North.
  *090 -> East.
@@ -49,11 +49,21 @@ void readMagnetometerData(int16_t val[3]) {
  */
 float getHeading(void) {
 	int16_t data[3] ;
-	float heading = 0.0 ;
+	float heading, angles[3], cosRoll, sinRoll, cosPitch, sinPitch ;
+
+	eulerAngles(angles) ;
+	angles[0] = (angles[0] * M_PI / 180) ;
+	angles[1] = (angles[1] * M_PI / 180) ;
+	cosPitch = cosf(angles[0]) ;
+	sinPitch = sinf(angles[0]) ;
+	cosRoll  = cosf(angles[1]) ;
+	sinRoll  = sinf(angles[1]) ;
 
 	readMagnetometerData(data) ;
+	float Xh = (data[0] * cosPitch) + (data[1] * sinRoll * sinPitch) + (data[2] * cosRoll * sinPitch) ;
+	float Yh = (data[1] * cosRoll) - (data[2] * sinRoll) ;
 
-	heading = atan2f((float)data[1], (float)data[0]) ;
+	heading = atan2f((-1.0 * Yh), Xh) ;
 	heading += 0.01309 ;
 
 	if(heading < 0)
@@ -64,4 +74,15 @@ float getHeading(void) {
 
 	return (heading * 180.0 / M_PI) ;
 }
-#endif	/*CORTEX_USE_FPU */
+
+/*This function calculates the magnetometer data in uT and
+ *is stored in val.
+ */
+void magGetScaledData(float val[3]) {
+	int16_t mag[3] ;
+	readMagnetometerData(mag) ;
+
+	val[0] = (float)mag[0] * MAG_RANGE ;
+	val[1] = (float)mag[1] * MAG_RANGE ;
+	val[2] = (float)mag[2] * MAG_RANGE ;
+}

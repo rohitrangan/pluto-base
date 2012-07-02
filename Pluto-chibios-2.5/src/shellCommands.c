@@ -203,7 +203,7 @@ void cmd_clear(BaseSequentialStream *bss, int argc, char *argv[]) {
 void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
 
   uint8_t i ;
-  int16_t data[3] ;
+  float data[3] ;
 
   if(argc != 1) {
     chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
@@ -217,25 +217,28 @@ void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
   if((!strcasecmp("--temp", argv[0])) || (!strcasecmp("-t", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
       readIMUData(IMU_TEMP_DATA, data) ;
-      chprintf(bss, "Temperature Sensor Value:- %d\r\n", data[0]) ;
+      chprintf(bss, "Temperature Sensor Value:- %f\r\n", data[0]) ;
       chThdSleepMilliseconds(100) ;
     }
   }
   else if((!strcasecmp("--accel", argv[0])) || (!strcasecmp("-a", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
       readIMUData(ACCEL_DATA, data) ;
-      chprintf(bss, "Accelerometer Value:- %d  %d  %d\r\n", data[0], data[1], data[2]) ;
+      chprintf(bss, "Accelerometer Value:- %f g ", data[0]) ;
+      chprintf(bss, " %f g ", data[1]) ;
+      chprintf(bss, " %f g\r\n", data[2]) ;
       chThdSleepMilliseconds(100) ;
     }
   }
   else if((!strcasecmp("--gyro", argv[0])) || (!strcasecmp("-g", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
       readIMUData(GYRO_DATA, data) ;
-      chprintf(bss, "Gyrometer Value:- %d  %d  %d\r\n", data[0], data[1], data[2]) ;
+      chprintf(bss, "Gyrometer Value:- %f deg/s", data[0]) ;
+      chprintf(bss, " %f deg/s ", data[1]) ;
+      chprintf(bss, " %f deg/s\r\n", data[2]) ;
       chThdSleepMilliseconds(100) ;
     }
   }
-#if CORTEX_USE_FPU
   else if((!strcasecmp("--angle", argv[0])) || (!strcasecmp("-n", argv[0]))) {
     float angles[3] ;
     for(i = 0 ; i < 50 ; i++) {
@@ -246,7 +249,6 @@ void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
       chThdSleepMilliseconds(100) ;
     }
   }
-#endif  /*CORTEX_USE_FPU */
   else if((!strcasecmp("--help", argv[0])) || (!strcasecmp("-h", argv[0]))) {
     chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
     chprintf(bss, " --help \t| -h\tDisplay this help.\r\n") ;
@@ -277,7 +279,7 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
     chprintf(bss, "Usage: magnetometer [options]\r\nOptions:\r\n") ;
     chprintf(bss, " --help \t| -h\tDisplay help.\r\n") ;
     chprintf(bss, " --raw  \t| -r\tDisplay raw data.\r\n") ;
-    chprintf(bss, " --tesla\t| -t\tDisplay value in nanoTesla.\r\n") ;
+    chprintf(bss, " --tesla\t| -t\tDisplay value in uT.\r\n") ;
     chprintf(bss, " --head \t| -a\tDisplay heading in degrees.\r\n") ;
     return ;
   }
@@ -290,12 +292,14 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
   }
   else if((!strcasecmp(argv[0], "--tesla")) || (!strcasecmp(argv[0], "-t"))) {
     for(i = 0 ; i < 50 ; i++) {
-      readMagnetometerData(data) ;
-      chprintf(bss, "Magnetometer Value:- %D %D %D\r\n", (data[0] * RANGE), (data[1] * RANGE), (data[2] * RANGE)) ;
+      float dat[3] ;
+      magGetScaledData(dat) ;
+      chprintf(bss, "Magnetometer Value:- %f uT", dat[0]) ;
+      chprintf(bss, " %f uT", dat[1]) ;
+      chprintf(bss, " %f uT\r\n", dat[2]) ;
       chThdSleepMilliseconds(100) ;
     }
   }
-#if CORTEX_USE_FPU
   else if((!strcasecmp(argv[0], "--head")) || (!strcasecmp(argv[0], "-a"))) {
 	float heading ;
     for(i = 0 ; i < 50 ; i++) {
@@ -304,12 +308,11 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
     	chThdSleepMilliseconds(100) ;
     }
   }
-#endif	/*CORTEX_USE_FPU */
   else if((!strcasecmp(argv[0], "--help")) || (!strcasecmp(argv[0], "-h"))) {
     chprintf(bss, "Usage: magnetometer [options]\r\nOptions:\r\n") ;
     chprintf(bss, " --help \t| -h\tDisplay this help.\r\n") ;
     chprintf(bss, " --raw  \t| -r\tDisplay raw data.\r\n") ;
-    chprintf(bss, " --tesla\t| -t\tDisplay value in nanoTesla.\r\n") ;
+    chprintf(bss, " --tesla\t| -t\tDisplay value in uT.\r\n") ;
     chprintf(bss, " --head \t| -a\tDisplay heading in degrees.\r\n") ;
     return ;
   }
@@ -317,7 +320,7 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
     chprintf(bss, "Usage: magnetometer [options]\r\nOptions:\r\n") ;
     chprintf(bss, " --help \t| -h\tDisplay help.\r\n") ;
     chprintf(bss, " --raw  \t| -r\tDisplay raw data.\r\n") ;
-    chprintf(bss, " --tesla\t| -t\tDisplay value in nanoTesla.\r\n") ;
+    chprintf(bss, " --tesla\t| -t\tDisplay value in uT.\r\n") ;
     chprintf(bss, " --head \t| -a\tDisplay heading in degrees.\r\n") ;
     return ;
   }
@@ -334,30 +337,39 @@ void cmd_barometer(BaseSequentialStream *bss, int argc, char *argv[]) {
     chprintf(bss, "Usage: barometer [options]\r\nOptions:\r\n") ;
     chprintf(bss, " --help \t| -h\tDisplay help.\r\n") ;
     chprintf(bss, " --press\t| -p\tDisplay Pressure in Pascals.\r\n") ;
-    chprintf(bss, " --temp \t| -t\tDisplay Temperature in 0.1 Degrees Celsius.\r\n") ;
+    chprintf(bss, " --temp \t| -t\tDisplay Temperature in Degrees Celsius.\r\n") ;
+    chprintf(bss, " --alt  \t| -a\tDisplay Absolute Altitude in meters.\r\n") ;
     return ;
   }
   if((!strcasecmp("--temp", argv[0])) || (!strcasecmp("-t", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
-      chprintf(bss, "Temperature Value:- %D\r\n", readBarometerData(BARO_TEMP_DATA)) ;
+      chprintf(bss, "Temperature Value:- %f C\r\n", readBarometerData(BARO_TEMP_DATA)) ;
     }
   }
   else if((!strcasecmp("--press", argv[0])) || (!strcasecmp("-p", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
-      chprintf(bss, "Pressure Value:- %D\r\n", readBarometerData(PRESSURE_DATA)) ;
+      chprintf(bss, "Pressure Value:- %f", readBarometerData(BARO_PRESSURE_DATA)) ;
+      chprintf(bss, " Pa\r\n") ;
+    }
+  }
+  else if((!strcasecmp("--alt", argv[0])) || (!strcasecmp("-a", argv[0]))) {
+	for(i = 0 ; i < 50 ; i++) {
+      chprintf(bss, "Altitude:- %f m\r\n", getAltitude()) ;
     }
   }
   else if((!strcasecmp("--help", argv[0])) || (!strcasecmp("-h", argv[0]))) {
     chprintf(bss, "Usage: barometer [options]\r\nOptions:\r\n") ;
     chprintf(bss, " --help \t| -h\tDisplay this help.\r\n") ;
     chprintf(bss, " --press\t| -p\tDisplay Pressure in Pascals.\r\n") ;
-    chprintf(bss, " --temp \t| -t\tDisplay Temperature in 0.1 Degrees Celsius.\r\n") ;
+    chprintf(bss, " --temp \t| -t\tDisplay Temperature in Degrees Celsius.\r\n") ;
+    chprintf(bss, " --alt  \t| -a\tDisplay Absolute Altitude in meters.\r\n") ;
   }
   else {
     chprintf(bss, "Usage: barometer [options]\r\nOptions:\r\n") ;
     chprintf(bss, " --help \t| -h\tDisplay help.\r\n") ;
     chprintf(bss, " --press\t| -p\tDisplay Pressure in Pascals.\r\n") ;
-    chprintf(bss, " --temp \t| -t\tDisplay Temperature in 0.1 Degrees Celsius.\r\n") ;
+    chprintf(bss, " --temp \t| -t\tDisplay Temperature in Degrees Celsius.\r\n") ;
+    chprintf(bss, " --alt  \t| -a\tDisplay Absolute Altitude in meters.\r\n") ;
   }
 
 }

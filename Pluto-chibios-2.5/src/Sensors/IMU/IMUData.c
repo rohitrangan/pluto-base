@@ -16,9 +16,10 @@
  *data.
  *TODO - rohitrangan output the data in engineering format.
  */
-void readIMUData(uint8_t mode, int16_t val[3]) {
+void readIMUData(uint8_t mode, float val[3]) {
 
-	uint8_t txbuf[6], rxbuf[6], i ;
+	uint8_t txbuf[1], rxbuf[6], i ;
+	int16_t tmp[3] ;
 	msg_t status = RDY_OK ;
 
 	for(i = 0 ; i < 6 ; i++)
@@ -33,9 +34,13 @@ void readIMUData(uint8_t mode, int16_t val[3]) {
 				  	  	  	  if(status != RDY_OK)
 				  	  	  		  return ;
 
-				  	  	  	  val[0] = (rxbuf[0] << 8) + rxbuf[1] ;
-				  	  	  	  val[1] = (rxbuf[2] << 8) + rxbuf[3] ;
-				  	  	  	  val[2] = (rxbuf[4] << 8) + rxbuf[5] ;
+				  	  	  	  tmp[0] = (rxbuf[0] << 8) + rxbuf[1] ;
+				  	  	  	  tmp[1] = (rxbuf[2] << 8) + rxbuf[3] ;
+				  	  	  	  tmp[2] = (rxbuf[4] << 8) + rxbuf[5] ;
+
+				  	  	  	  val[0] = (float)tmp[0] / ACCEL_XSENS ;
+				  	  	      val[1] = (float)tmp[1] / ACCEL_YSENS ;
+				  	  	      val[2] = (float)tmp[2] / ACCEL_ZSENS ;
 				  	  	  	  break ;
 
 		case GYRO_DATA  	: txbuf[0] = GYRO_XOUT_H ;
@@ -46,9 +51,13 @@ void readIMUData(uint8_t mode, int16_t val[3]) {
 				  	  	  	  if(status != RDY_OK)
 				  	  	  		  return ;
 
-				  	  	  	  val[0] = (rxbuf[0] << 8) + rxbuf[1] ;
-				  	  	  	  val[1] = (rxbuf[2] << 8) + rxbuf[3] ;
-				  	  	  	  val[2] = (rxbuf[4] << 8) + rxbuf[5] ;
+				  	  	  	  tmp[0] = (rxbuf[0] << 8) + rxbuf[1] ;
+				  	  	      tmp[1] = (rxbuf[2] << 8) + rxbuf[3] ;
+				  	  	  	  tmp[2] = (rxbuf[4] << 8) + rxbuf[5] ;
+
+				  	  	  	  val[0] = (float)tmp[0] / GYRO_XSENS ;
+				  	  	      val[1] = (float)tmp[1] / GYRO_YSENS ;
+				  	  	      val[2] = (float)tmp[2] / GYRO_ZSENS ;
 				  	  	  	  break ;
 
 		case IMU_TEMP_DATA  : txbuf[0] = TEMP_OUT_H ;
@@ -59,7 +68,8 @@ void readIMUData(uint8_t mode, int16_t val[3]) {
 		  	  	  	  	  	  if(status != RDY_OK)
 		  	  	  	  	  		  return ;
 
-		  	  	  	  	  	  val[0] = (rxbuf[0] << 8) + rxbuf[1] ;
+		  	  	  	  	  	  tmp[0] = (rxbuf[0] << 8) + rxbuf[1] ;
+		  	  	  	  	  	  val[0] = (float)tmp[0] ;
 		  	  	  	  	  	  break ;
 
 		default 	   	   : return ;
@@ -72,10 +82,9 @@ void readIMUData(uint8_t mode, int16_t val[3]) {
  *The angles are stored in the order pitch,
  *roll and yaw.
  */
-#if CORTEX_USE_FPU
 void eulerAngles(float angles[3]) {
 
-	int16_t acc[3] ;
+	float acc[3] ;
 	readIMUData(ACCEL_DATA, acc) ;
 	chThdSleepMilliseconds(10) ;
 
@@ -91,4 +100,3 @@ void eulerAngles(float angles[3]) {
 
 	angles[2] = 0.0 ;
 }
-#endif	/*CORTEX_USE_FPU */
