@@ -75,6 +75,7 @@ float getHeading(void) {
 	return (heading * 180.0 / M_PI) ;
 }
 
+
 /*This function calculates the magnetometer data in uT and
  *is stored in val.
  */
