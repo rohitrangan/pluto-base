@@ -12,7 +12,7 @@
 #include "IMUData.h"
 #include "MagnetometerData.h"
 
-/*The raw values are stored in val. To convert to nano Tesla,
+/*The raw values are stored in val. To convert to microTesla,
  *multiply val[i] by MAG_RANGE.
  */
 void readMagnetometerData(int16_t val[3]) {
@@ -48,7 +48,7 @@ void readMagnetometerData(int16_t val[3]) {
  *270 -> West.
  */
 float getHeading(void) {
-	int16_t data[3] ;
+	float data[3] ;
 	float heading, angles[3], cosRoll, sinRoll, cosPitch, sinPitch ;
 
 	eulerAngles(angles) ;
@@ -59,9 +59,9 @@ float getHeading(void) {
 	cosRoll  = cosf(angles[1]) ;
 	sinRoll  = sinf(angles[1]) ;
 
-	readMagnetometerData(data) ;
+	magGetScaledData(data) ;
 	float Xh = (data[0] * cosPitch) + (data[1] * sinRoll * sinPitch) + (data[2] * cosRoll * sinPitch) ;
-	float Yh = (data[1] * cosRoll) - (data[2] * sinRoll) ;
+	float Yh = (data[1] * cosRoll ) - (data[2] * sinRoll) ;
 
 	heading = atan2f((-1.0 * Yh), Xh) ;
 	heading += 0.01309 ;

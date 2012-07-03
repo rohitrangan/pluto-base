@@ -11,7 +11,7 @@
 #include "hmc5883.h"
 #define MAG_RANGE hmc_range
 
-/*The raw values are stored in val. To convert to nano Tesla,
+/*The raw values are stored in val. To convert to microTesla,
  *multiply val[i] by MAG_RANGE.
  */
 void readMagnetometerData(int16_t val[3]) ;

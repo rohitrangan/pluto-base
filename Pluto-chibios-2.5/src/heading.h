@@ -8,7 +8,7 @@
 #ifndef HEADING_H_
 #define HEADING_H_
 
-void start_headingthread(BaseSequentialStream *bss);
+void startHeadingThread(BaseSequentialStream *bss);
 
 
 #endif /* HEADING_H_ */

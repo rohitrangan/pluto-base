@@ -19,7 +19,7 @@
 #include "PWMInit.h"
 
 /*Config for USART1 */
-static const SerialConfig usart1 = {
+static const SerialConfig usartOP = {
     115200,
     0,
     USART_CR2_STOP1_BITS | USART_CR2_LINEN,
@@ -79,15 +79,15 @@ void i2cScanner(I2CDriver *FindI2C, const char *driverName) {
 	    i2cReleaseBus(FindI2C) ;
 	    if(messages == 0) {
 	    	if(x == 0x28)
-	    		chprintf((BaseSequentialStream *)&SD1, "MS4515\tDetected on %s\r\n", driverName) ;
+	    		chprintf((BaseSequentialStream *)&OUTPUT, "MS4515\tDetected on %s\r\n", driverName) ;
 	    	if(x == 0x1E)
-	    		chprintf((BaseSequentialStream *)&SD1, "HMC\tDetected on %s\r\n", driverName) ;
+	    		chprintf((BaseSequentialStream *)&OUTPUT, "HMC\tDetected on %s\r\n", driverName) ;
 	    	if(x == 0x68)
-	    		chprintf((BaseSequentialStream *)&SD1, "MPU\tDetected on %s\r\n", driverName) ;
+	    		chprintf((BaseSequentialStream *)&OUTPUT, "MPU\tDetected on %s\r\n", driverName) ;
 	    	if(x == 0x69)
-	    		chprintf((BaseSequentialStream *)&SD1, "MPU\tDetected on %s\r\n", driverName) ;
+	    		chprintf((BaseSequentialStream *)&OUTPUT, "MPU\tDetected on %s\r\n", driverName) ;
 	    	if(x == 0x77)
-	    		chprintf((BaseSequentialStream *)&SD1, "BMP\tDetected on %s\r\n", driverName) ;
+	    		chprintf((BaseSequentialStream *)&OUTPUT, "BMP\tDetected on %s\r\n", driverName) ;
 	    }
 		chThdSleepMilliseconds(1) ;
 	}
@@ -97,8 +97,8 @@ void i2cScanner(I2CDriver *FindI2C, const char *driverName) {
 #endif /*PLUTO_USE_SCANNER */
 
 /*Initializes SerialDriver1 */
-void SD1Init(void) {
-	sdStart(&SD1, &usart1);
+void OUTPUTInit(void) {
+	sdStart(&OUTPUT, &usartOP);
 	palSetPadMode(GPIOB, 6, PAL_MODE_ALTERNATE(7));
 	palSetPadMode(GPIOB, 7, PAL_MODE_ALTERNATE(7));
 }

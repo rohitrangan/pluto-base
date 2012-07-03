@@ -30,6 +30,6 @@ void i2cScanner(I2CDriver *FindI2C, const char *driverName) ;
 #endif	/*PLUTO_USE_SCANNER */
 
 /*Initializes SerialDriver1 for Output and Input */
-void SD1Init(void) ;
+void OUTPUTInit(void) ;
 
 #endif /* PLUTOINIT_H_ */

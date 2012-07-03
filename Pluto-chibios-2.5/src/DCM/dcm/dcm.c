@@ -124,16 +124,14 @@ void dcm_rotate(float dcm[3][3], float w[3]){
  * angular rates in rad/s (scale is MATTER),
  * magnetic flux in uT (scale does not matter because values will be normalized),
  * time in s */
-// float* dcmUpdate(float xacc,  float yacc,  float zacc, float xgyro, float ygyro, float zgyro, float xmag,  float ymag,  float zmag, float imu_interval)
-void dcmUpdate (float *w, float xacc,  float yacc,  float zacc, float xgyro, float ygyro, float zgyro, float xmag,  float ymag,  float zmag, float imu_interval)
+void dcmUpdate (float dcmEst[3][3], float xacc,  float yacc,  float zacc, float xgyro, float ygyro, float zgyro, float xmag,  float ymag,  float zmag, float imu_interval)
 {
   uint32_t i;
   uint32_t imu_step = 0;                /* incremented on each call to imu_update */
-  float dcmEst[3][3] = {{1,0,0},
-                        {0,1,0},
-                        {0,0,1}};
   float Kacc[3];  //K(b) vector according to accelerometer in body's coordinates
   float Imag[3];  //I(b) vector accordng to magnetometer in body's coordinates
+  *accweight = 0.01 ;
+  *magweight = 0.01 ;
 
   //interval since last call
   //imu_interval_ms = itg3200_period;
@@ -216,7 +214,7 @@ void dcmUpdate (float *w, float xacc,  float yacc,  float zacc, float xgyro, flo
   //gyro rate direction is usually specified (in datasheets) as the device's(body's) rotation
   //about a fixed earth's (global) frame, if we look from the perspective of device then
   //the global vectors (I,K,J) rotation direction will be the inverse
-  // static float w[3];     //gyro rates (angular velocity of a global vector in local coordinates)
+  float w[3];     //gyro rates (angular velocity of a global vector in local coordinates)
   w[0] = -xgyro;  //rotation rate about accelerometer's X axis (GY output)
   w[1] = -ygyro;  //rotation rate about accelerometer's Y axis (GX output)
   w[2] = -zgyro;  //rotation rate about accelerometer's Z axis (GZ output)
@@ -236,6 +234,7 @@ void dcmUpdate (float *w, float xacc,  float yacc,  float zacc, float xgyro, flo
     }
   }
 
+  dcm_rotate(dcmEst, w);
   imu_step++;
 }
 
