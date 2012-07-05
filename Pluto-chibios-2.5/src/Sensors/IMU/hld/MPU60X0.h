@@ -334,22 +334,5 @@
 #define CLKSEL_19MHz		5		/* PLL with external 19.2MHzreference */
 
 void set_mpu_i2c(void) ;	//Added by rohitrangan on 30-05-2012
-uint8_t set_mpu_sample_rate(uint8_t samplerate_divisor);
-uint8_t set_mpu_config_regsiter(uint8_t ext_sync_set, uint8_t dlpf_cfg);
-uint8_t set_mpu_gyro(uint8_t xgyro_st, uint8_t ygyro_st, uint8_t zgyro_st, uint8_t gyro_range);
-uint8_t set_mpu_accel(uint8_t xaccel_st, uint8_t yaccel_st, uint8_t zaccel_st, uint8_t accel_range, uint8_t dhpf_accel);
-uint8_t set_mpu_fifo_register(uint8_t temperature_fifo, uint8_t xg_fifo, uint8_t yg_fifo, uint8_t zg_fifo, uint8_t accel_fifo, uint8_t slv2_fifo, uint8_t slv1_fifo,uint8_t slv0_fifo);
-uint8_t set_mpu_interrupt_behavior(uint8_t int_level, uint8_t int_pin_mode, uint8_t latch_int, uint8_t int_status_bits, uint8_t fsync_level, uint8_t fsync_enable, uint8_t i2c_bypass, uint8_t clock);
-uint8_t set_mpu_interrupt_source(uint8_t free_fall, uint8_t motion_threshold, uint8_t zero_motion, uint8_t fifo_overflow, uint8_t i2c_mst, uint8_t data_ready);
-uint8_t reset_mpu_signal_path(uint8_t gyro_reset, uint8_t accel_reset, uint8_t temperature_reset);
-uint8_t set_mpu_user_control(uint8_t fifo_operation, uint8_t aux_i2c, uint8_t bus_select, uint8_t fifo_reset, uint8_t i2c_reset, uint8_t signal_cond_reset);
-uint8_t set_mpu_power_mgmt1(uint8_t device_reset, uint8_t sleep, uint8_t cycle, uint8_t temperature, uint8_t clock_source);
-void write_mpu_sample_rate(void);
-void write_mpu_config_register(void);
-void write_mpu_gyro(void);
-void write_mpu_accel(void);
-void write_mpu_power_mgmt1(void);
-void write_mpu_user_control(void);
-void mpu_i2c_write(uint8_t addr, uint8_t value);
 
 #endif /* MPU60X0_H_ */

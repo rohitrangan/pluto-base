@@ -32,4 +32,7 @@
 /*To check whether the onboard FPU works */
 #define PLUTO_USE_FPUTEST			FALSE
 
+/*Serial Driver for Output. */
+#define OUTPUT						SD1
+
 #endif /* PLUTOCONF_H_ */

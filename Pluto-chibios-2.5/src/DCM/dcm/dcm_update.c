@@ -15,10 +15,7 @@
 
 // TODO - Print the gyro, accelerometer and magnetometer values separately
 
-float acc_final[3];
-float gyro[3];
-int16_t mag_raw[3];
-float gyro_rates[3], mag_final[3];
+float mag_final[3], gyro[3], acc_final[3];
 
 float calc_gyro_rate(int16_t raw, float sens){
   float tmp = (float)raw;
@@ -27,11 +24,12 @@ float calc_gyro_rate(int16_t raw, float sens){
 }
 
 static WORKING_AREA(waUpdate, 512);
-static msg_t Update(void *arg){
+static msg_t Update(void *arg) {
 
-	chRegSetThreadName("update");
+	float dcmMatrix[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0 ,1}} ;
+	chRegSetThreadName("DCMUpdate");
 	while(TRUE){
-		float interval = 110.0f; /* Time between 2 measurements */
+		float interval = 110.0f, pitch, roll, yaw; /* Time between 2 measurements */
 
 		readIMUData(ACCEL_DATA, acc_final) ; /* Reads values from the accelerometer */
 		chThdSleepMilliseconds(10) ;
@@ -39,18 +37,28 @@ static msg_t Update(void *arg){
 		readIMUData(GYRO_DATA, gyro) ; /* Reads values from the gyroscope */
 		chThdSleepMilliseconds(10) ;
 
-		readMagnetometerData(mag_raw) ; /* Reads values from the magnetometer */
+		magGetScaledData(mag_final) ; /* Reads values from the magnetometer */
 		chThdSleepMilliseconds(20) ;
 
-		mag_final[0] = mag_raw[0] * MAG_RANGE ;
-		mag_final[1] = mag_raw[1] * MAG_RANGE ;
-		mag_final[2] = mag_raw[2] * MAG_RANGE ;
+		dcmUpdate(dcmMatrix, acc_final[0], acc_final[1], acc_final[2], gyro[0], gyro[1], gyro[2], mag_final[0], mag_final[1], mag_final[2], interval);
 
-		dcmUpdate(gyro_rates, acc_final[0], acc_final[1], acc_final[2], gyro[0], gyro[1], gyro[2], mag_final[0], mag_final[1], mag_final[2], interval);
+		if(dcmMatrix[2][2] >= 0) {
+			pitch = -asinf(dcmMatrix[2][0]) ;
+			roll  = -asinf(dcmMatrix[2][1]) ;
+		}
+		else {
+			pitch = M_PI - (-asinf(dcmMatrix[2][0])) ;
+			roll  = M_PI - (-asinf(dcmMatrix[2][1])) ;
+		}
 
-		chprintf((BaseSequentialStream *)arg,"gyro rate x: %f\t\t", gyro_rates[0]);
-		chprintf((BaseSequentialStream *)arg,"gyro rate y: %f\t\t", gyro_rates[1]);
-		chprintf((BaseSequentialStream *)arg,"gyro rate z: %f\r\n", gyro_rates[2]);
+		yaw = atan2f(dcmMatrix[1][0], (-1 * dcmMatrix[0][0])) ;
+		pitch = (180 * pitch) / M_PI ;
+		roll  = (180 * roll ) / M_PI ;
+		yaw   = (180 * yaw  ) / M_PI ;
+
+		chprintf((BaseSequentialStream *)arg,"Pitch : %f\t\t", pitch);
+		chprintf((BaseSequentialStream *)arg,"Roll  : %f\t\t", roll );
+		chprintf((BaseSequentialStream *)arg,"Yaw   : %f\r\n", yaw  );
 
 		chThdSleepMilliseconds(100) ;
 	}

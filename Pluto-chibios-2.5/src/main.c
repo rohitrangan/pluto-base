@@ -38,11 +38,11 @@ int main(void) {
 	chSysInit();
 
 	/*
-	 * Activates the SerialDriver1 and I2C Drivers.
+	 * Activates the SerialDriver for Output and I2C Drivers.
 	 */
-	SD1Init() ;
+	OUTPUTInit() ;
 	chThdSleepMilliseconds(10) ;
-	chprintf((BaseSequentialStream *)&SD1, "\r\nInitializing...\r\n") ;
+	chprintf((BaseSequentialStream *)&OUTPUT, "\r\nInitializing...\r\n") ;
 #if PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
 	I2CInitialize() ;
 	chThdSleepMilliseconds(10) ;
@@ -66,8 +66,12 @@ int main(void) {
   	shellInit() ;
 #endif	/*PLUTO_USE_SHELL */
 
+<<<<<<< HEAD
   	//startDCMThread((BaseSequentialStream *)&SD1) ;
   	start_headingthread((BaseSequentialStream *)&SD1) ;
+=======
+  	startDCMThread((BaseSequentialStream *)&OUTPUT) ;
+>>>>>>> d3b3c52ed1cb2ab5a24c4c032e90f1957c39f058
 
   	while(TRUE) {
 #if PLUTO_USE_SHELL

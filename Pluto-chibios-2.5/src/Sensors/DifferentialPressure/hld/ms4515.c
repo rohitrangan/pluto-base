@@ -9,6 +9,7 @@
 #include "hal.h"
 #include "ms4515.h"
 #include "chprintf.h"
+#include "plutoconf.h"
 
 uint8_t MS4515_rxbuf[20], MS4515_txbuf[20], MS4515_status = 0;
 int16_t dp_raw = 0, dT_raw = 0;
@@ -17,7 +18,7 @@ void read_ms4515(void){
 
 	//float Differential_pressure = 0
 	float Temperature_MS4515 = 0;
-//	chprintf((BaseSequentialStream *)&SD6, "Inside Diff open drain mode and  pressure measurement address new %x \r\n", MS4515_addr);
+//	chprintf((BaseSequentialStream *)&OUTPUT, "Inside Diff open drain mode and  pressure measurement address new %x \r\n", MS4515_addr);
 
 	/*Acquire I2C bus before starting I2C communication - Pending */
 	i2cMasterReceive(&I2C_MS4515, MS4515_ADDR, MS4515_rxbuf, 4);
@@ -31,6 +32,6 @@ void read_ms4515(void){
 	dT_raw = (0xFFE0 & dT_raw)>>5;
 	Temperature_MS4515 = ((200*dT_raw)/2047) - 50;
 
-	chprintf((BaseSequentialStream *)&SD6,"MS4515 raw bytes output  %x , %x , %x , %x, %d , %d , %d \r\n", MS4515_rxbuf[0], MS4515_rxbuf[1], MS4515_rxbuf[2],MS4515_rxbuf[3], dp_raw, dT_raw, Temperature_MS4515);
+	chprintf((BaseSequentialStream *)&OUTPUT,"MS4515 raw bytes output  %x , %x , %x , %x, %d , %d , %d \r\n", MS4515_rxbuf[0], MS4515_rxbuf[1], MS4515_rxbuf[2],MS4515_rxbuf[3], dp_raw, dT_raw, Temperature_MS4515);
 
 }

@@ -55,9 +55,9 @@ void readIMUData(uint8_t mode, float val[3]) {
 				  	  	      tmp[1] = (rxbuf[2] << 8) + rxbuf[3] ;
 				  	  	  	  tmp[2] = (rxbuf[4] << 8) + rxbuf[5] ;
 
-				  	  	  	  val[0] = (float)tmp[0] / GYRO_XSENS ;
-				  	  	      val[1] = (float)tmp[1] / GYRO_YSENS ;
-				  	  	      val[2] = (float)tmp[2] / GYRO_ZSENS ;
+				  	  	  	  val[0] = ((float)tmp[0] / GYRO_XSENS) * (M_PI / 180.0) ;
+				  	  	      val[1] = ((float)tmp[1] / GYRO_YSENS) * (M_PI / 180.0) ;
+				  	  	      val[2] = ((float)tmp[2] / GYRO_ZSENS) * (M_PI / 180.0) ;
 				  	  	  	  break ;
 
 		case IMU_TEMP_DATA  : txbuf[0] = TEMP_OUT_H ;

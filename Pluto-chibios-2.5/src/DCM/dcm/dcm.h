@@ -9,7 +9,7 @@
 #define DCM_H_
 
 void dcmInit(void);
-void dcmUpdate(float *w, float xacc,  float yacc,  float zacc,\
+void dcmUpdate(float dcmEst[3][3], float xacc,  float yacc,  float zacc,\
 				float xgyro, float ygyro, float zgyro,\
 				float xmag,  float ymag,  float zmag,\
 				float imu_interval);

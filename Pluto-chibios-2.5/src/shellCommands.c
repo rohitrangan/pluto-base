@@ -46,7 +46,7 @@ const ShellCommand commands[] = {
 };
 
 const ShellConfig shell_cfg1 = {
-  (BaseSequentialStream *)&SD1,
+  (BaseSequentialStream *)&OUTPUT,
   commands
 };
 
@@ -206,12 +206,12 @@ void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
   float data[3] ;
 
   if(argc != 1) {
-    chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
-    chprintf(bss, " --help \t| -h\tDisplay help.\r\n") ;
-    chprintf(bss, " --temp \t| -t\tTemperature Sensor's value.\r\n") ;
-    chprintf(bss, " --accel\t| -a\tAccelerometer's value.\r\n") ;
-    chprintf(bss, " --gyro \t| -g\tGyrometer's value.\r\n") ;
-    chprintf(bss, " --angle\t| -n\tEuler angles value. First pitch, then roll and yaw.\r\n") ;
+	  chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
+	  chprintf(bss, " --help \t| -h\tDisplay this help.\r\n") ;
+	  chprintf(bss, " --temp \t| -t\tTemperature Sensor's value.\r\n") ;
+	  chprintf(bss, " --accel\t| -a\tValue of acceleration in g's.\r\n") ;
+	  chprintf(bss, " --gyro \t| -g\tValue of Angular Speed in rad/s.\r\n") ;
+	  chprintf(bss, " --angle\t| -n\tEuler angles value. First pitch, then roll and yaw.\r\n") ;
     return ;
   }
   if((!strcasecmp("--temp", argv[0])) || (!strcasecmp("-t", argv[0]))) {
@@ -233,9 +233,9 @@ void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
   else if((!strcasecmp("--gyro", argv[0])) || (!strcasecmp("-g", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
       readIMUData(GYRO_DATA, data) ;
-      chprintf(bss, "Gyrometer Value:- %f deg/s", data[0]) ;
-      chprintf(bss, " %f deg/s ", data[1]) ;
-      chprintf(bss, " %f deg/s\r\n", data[2]) ;
+      chprintf(bss, "Gyrometer Value:- %f rad/s", data[0]) ;
+      chprintf(bss, " %f rad/s ", data[1]) ;
+      chprintf(bss, " %f rad/s\r\n", data[2]) ;
       chThdSleepMilliseconds(100) ;
     }
   }
@@ -253,17 +253,17 @@ void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
     chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
     chprintf(bss, " --help \t| -h\tDisplay this help.\r\n") ;
     chprintf(bss, " --temp \t| -t\tTemperature Sensor's value.\r\n") ;
-    chprintf(bss, " --accel\t| -a\tAccelerometer's value.\r\n") ;
-    chprintf(bss, " --gyro \t| -g\tGyrometer's value.\r\n") ;
+    chprintf(bss, " --accel\t| -a\tValue of acceleration in g's.\r\n") ;
+    chprintf(bss, " --gyro \t| -g\tValue of Angular Speed in rad/s.\r\n") ;
     chprintf(bss, " --angle\t| -n\tEuler angles value. First pitch, then roll and yaw.\r\n") ;
   }
   else {
-    chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
-    chprintf(bss, " --help \t| -h\tDisplay help.\r\n") ;
-    chprintf(bss, " --temp \t| -t\tTemperature Sensor's value.\r\n") ;
-    chprintf(bss, " --accel\t| -a\tAccelerometer's value.\r\n") ;
-    chprintf(bss, " --gyro \t| -g\tGyrometer's value.\r\n") ;
-    chprintf(bss, " --angle\t| -n\tEuler angles value. First pitch, then roll and yaw.\r\n") ;
+	  chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
+	  chprintf(bss, " --help \t| -h\tDisplay this help.\r\n") ;
+	  chprintf(bss, " --temp \t| -t\tTemperature Sensor's value.\r\n") ;
+	  chprintf(bss, " --accel\t| -a\tValue of acceleration in g's.\r\n") ;
+	  chprintf(bss, " --gyro \t| -g\tValue of Angular Speed in rad/s.\r\n") ;
+	  chprintf(bss, " --angle\t| -n\tEuler angles value. First pitch, then roll and yaw.\r\n") ;
   }
 
 }
