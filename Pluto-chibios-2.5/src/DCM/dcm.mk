@@ -10,4 +10,4 @@ DCMSRC = ${DCMDIR}/dcm/dcm.c \
 # Include Directories.
 
 DCMINC = ${DCMDIR}/dcm \
-		 ${DCMDIR}/vector3d		 
+         ${DCMDIR}/vector3d		 

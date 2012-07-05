@@ -12,7 +12,6 @@
 #include "chprintf.h"
 
 #include "dcm.h"
-// #include "param.h"
 #include "vector3d.h"
 
 /*
@@ -130,8 +129,8 @@ void dcmUpdate (float dcmEst[3][3], float xacc,  float yacc,  float zacc, float 
   uint32_t imu_step = 0;                /* incremented on each call to imu_update */
   float Kacc[3];  //K(b) vector according to accelerometer in body's coordinates
   float Imag[3];  //I(b) vector accordng to magnetometer in body's coordinates
-  *accweight = 0.01 ;
-  *magweight = 0.01 ;
+  accweight = 0.01 ;
+  magweight = 0.01 ;
 
   //interval since last call
   //imu_interval_ms = itg3200_period;
