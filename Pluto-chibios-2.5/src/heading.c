@@ -22,8 +22,8 @@ static msg_t heading(void *arg){
 	while(TRUE){
 		eulerAngles(angle); /* Gets the roll and pitch angles in degrees */
 		cos_pitch = cosf(angle[0]*M_PI/180);
-		sin_pitch = sinf(angle[1]*M_PI/180);
-		cos_roll = cosf(angle[0]*M_PI/180);
+		sin_pitch = sinf(angle[0]*M_PI/180);
+		cos_roll = cosf(angle[1]*M_PI/180);
 		sin_roll =sinf(angle[1]*M_PI/180);
 
 		readMagnetometerData(mag) ;
@@ -32,7 +32,7 @@ static msg_t heading(void *arg){
 		X_h = (float)mag[0] * cos_pitch + (float)mag[2] * sin_pitch;
 		Y_h = (float)mag[0] * sin_roll * sin_pitch + (float)mag[1] * cos_roll - (float)mag[2] * sin_roll * cos_pitch ;
 
-		Heading = atan2f(Y_h, X_h);
+		Heading = atan2f((-1) *Y_h, X_h);
 		Heading *= 180;
 		Heading = Heading / M_PI;
 		chprintf((BaseSequentialStream *)arg,"Heading : %f \r\n", Heading); /* Heading is obtained in degrees */

@@ -5,15 +5,9 @@
 
 DCMSRC = ${DCMDIR}/dcm/dcm.c \
 		 ${DCMDIR}/dcm/dcm_update.c \
-		 ${DCMDIR}/parameters/param.c \
-		 ${DCMDIR}/message/message.c \
 		 ${DCMDIR}/vector3d/vector3d.c
 		 
 # Include Directories.
 
 DCMINC = ${DCMDIR}/dcm \
-		 ${DCMDIR}/parameters \
-		 ${DCMDIR}/message \
-		 ${DCMDIR}/servo \
-		 ${DCMDIR}/include \
 		 ${DCMDIR}/vector3d		 

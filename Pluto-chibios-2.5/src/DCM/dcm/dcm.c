@@ -12,7 +12,7 @@
 #include "chprintf.h"
 
 #include "dcm.h"
-#include "param.h"
+// #include "param.h"
 #include "vector3d.h"
 
 /*
@@ -60,10 +60,10 @@ Output variables are:
 static float mag_modulus = 0;
 
 /* accelerometer data weight relative to gyro's weight of 1 */
-static float *accweight = NULL;
+static float accweight = 0;
 
 /* magnetometer data weight relative to gyro's weight of 1. */
-static float *magweight = NULL;
+static float magweight = 0;
 
 /*
  *******************************************************************************
@@ -224,7 +224,7 @@ void dcmUpdate (float *w, float xacc,  float yacc,  float zacc, float xgyro, flo
     /* speedup magnetic course obtaining */
     for(i=0;i<3;i++){
       w[i] *= imu_interval;  //scale by elapsed time to get angle in radians
-      w[i] = (float)(w[i] + *accweight*wA[i] + 0.1f*wM[i]) / (1.0f + *accweight + 0.1f);
+      w[i] = (float)(w[i] + 0.01*wA[i] + 0.1f*wM[i]) / (1.0f + 0.01 + 0.1f);
     }
   }
   else{
@@ -232,7 +232,7 @@ void dcmUpdate (float *w, float xacc,  float yacc,  float zacc, float xgyro, flo
     for(i=0;i<3;i++){
       w[i] *= imu_interval;  //scale by elapsed time to get angle in radians
       //compute weighted average with the accelerometer correction vector
-      w[i] = (float)(w[i] + *accweight*wA[i] + *magweight*wM[i]) / (1.0f + *accweight + *magweight);
+      w[i] = (float)(w[i] + 0.01*wA[i] + 0.01*wM[i]) / (1.0f + 0.01 + 0.01);
     }
   }
 
@@ -243,8 +243,10 @@ void dcmUpdate (float *w, float xacc,  float yacc,  float zacc, float xgyro, flo
 // imu_init
 //-------------------------------------------------------------------
 void dcmInit(){
-  magweight = ValueSearch("IMU_magweight");
-  accweight = ValueSearch("IMU_accweight");
+  // magweight = ValueSearch("IMU_magweight");
+  // accweight = ValueSearch("IMU_accweight");
+	magweight = 0.01 ;
+	accweight = 0.01 ;
 }
 
 

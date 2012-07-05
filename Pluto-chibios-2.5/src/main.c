@@ -19,6 +19,7 @@
 #include "plutoInit.h"
 #include "dcm_update.h"
 #include "shellCommands.h"
+#include "heading.h"
 
 /*
  * Application entry point.
@@ -66,6 +67,7 @@ int main(void) {
 #endif	/*PLUTO_USE_SHELL */
 
   	//startDCMThread((BaseSequentialStream *)&SD1) ;
+  	start_headingthread((BaseSequentialStream *)&SD1) ;
 
   	while(TRUE) {
 #if PLUTO_USE_SHELL
