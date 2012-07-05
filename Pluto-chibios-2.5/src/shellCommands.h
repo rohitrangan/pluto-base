@@ -50,6 +50,10 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]);
 void cmd_barometer(BaseSequentialStream *bss, int argc, char *argv[]);
 #endif /*PLUTO_USE_BAROMETER */
 
+#if HAL_USE_PWM
+void cmd_pwm(BaseSequentialStream *bss, int argc, char *argv[]);
+#endif	/*HAL_USE_PWM */
+
 #endif	/*PLUTO_USE_SHELL */
 
 #endif	/*SHELLCOMMANDS_H_ */

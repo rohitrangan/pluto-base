@@ -24,13 +24,16 @@
 #define PLUTO_USE_DIFFP				FALSE
 
 /*To use the shell for carrying out commands (DO NOT DISABLE) */
-#define PLUTO_USE_SHELL				FALSE
+#define PLUTO_USE_SHELL				TRUE
 
 /*To list all the Sensors on board for debugging.(Default should be FALSE) */
 #define PLUTO_USE_SCANNER			FALSE
 
 /*To check whether the onboard FPU works */
 #define PLUTO_USE_FPUTEST			FALSE
+
+/*To use DCM to calculate the altitude */
+#define PLUTO_USE_DCM				FALSE
 
 /*Serial Driver for Output. */
 #define OUTPUT						SD1

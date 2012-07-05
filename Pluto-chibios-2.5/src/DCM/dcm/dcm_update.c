@@ -9,12 +9,14 @@
 
 #include "ch.h"
 #include "dcm.h"
-#include "chprintf.h"
 #include "IMUData.h"
+#include "chprintf.h"
+#include "plutoconf.h"
 #include "MagnetometerData.h"
 
 // TODO - Print the gyro, accelerometer and magnetometer values separately
 
+#if PLUTO_USE_DCM
 float mag_final[3], gyro[3], acc_final[3];
 
 float calc_gyro_rate(int16_t raw, float sens){
@@ -68,3 +70,4 @@ static msg_t Update(void *arg) {
 void startDCMThread(BaseSequentialStream *bss){
 	chThdCreateStatic(waUpdate, sizeof(waUpdate), NORMALPRIO, Update, bss);
 }
+#endif	/*PLUTO_USE_DCM */

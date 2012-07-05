@@ -10,10 +10,12 @@
 #include "ch.h"
 #include "hal.h"
 #include "chprintf.h"
+#include "plutoconf.h"
 
 #include "dcm.h"
 #include "vector3d.h"
 
+#if PLUTO_USE_DCM
 /*
 Output variables are:
   DcmEst[0..2] which are the direction cosine of the X,Y,Z axis
@@ -123,7 +125,7 @@ void dcm_rotate(float dcm[3][3], float w[3]){
  * angular rates in rad/s (scale is MATTER),
  * magnetic flux in uT (scale does not matter because values will be normalized),
  * time in s */
-void dcmUpdate (float dcmEst[3][3], float xacc,  float yacc,  float zacc, float xgyro, float ygyro, float zgyro, float xmag,  float ymag,  float zmag, float imu_interval)
+void dcmUpdate(float dcmEst[3][3], float xacc,  float yacc,  float zacc, float xgyro, float ygyro, float zgyro, float xmag,  float ymag,  float zmag, float imu_interval)
 {
   uint32_t i;
   uint32_t imu_step = 0;                /* incremented on each call to imu_update */
@@ -241,16 +243,7 @@ void dcmUpdate (float dcmEst[3][3], float xacc,  float yacc,  float zacc, float 
 // imu_init
 //-------------------------------------------------------------------
 void dcmInit(){
-  // magweight = ValueSearch("IMU_magweight");
-  // accweight = ValueSearch("IMU_accweight");
 	magweight = 0.01 ;
 	accweight = 0.01 ;
 }
-
-
-
-
-
-
-
-
+#endif /*PLUTO_USE_DCM */

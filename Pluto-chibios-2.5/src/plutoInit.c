@@ -139,7 +139,7 @@ void I2CInitialize(void) {
 #endif	/*PLUTO_USE_IMU */
 
 #if PLUTO_USE_MAGNETOMETER
-	initialize_HMC(AVERAGE4, ODR6, MODE_NORMAL, RANGE_1300mGa, OP_MODE_SINGLE) ;
+	initialize_HMC(AVERAGE4, ODR6, MODE_NORMAL, RANGE_880mGa, OP_MODE_SINGLE) ;
 	chThdSleepMilliseconds(10) ;
 #endif	/*PLUTO_USE_MAGNETOMETER*/
 

@@ -6,19 +6,22 @@
  */
 /* 18-06-2012 - Riya Ray - The functions fpuTest and cmd_fputest have been added */
 
-#include <string.h>
+#include<stdlib.h>
+#include<string.h>
 #include "plutoconf.h"
 
 #include "ch.h"
 #include "ff.h"
-#include "fsInit.h"
 #include "hal.h"
 #include "shell.h"
 #include "chprintf.h"
+
+#include "fsInit.h"
+#include "IMUData.h"
+#include "PWMEnable.h"
 #include "shellCommands.h"
 #include "BarometerData.h"
 #include "MagnetometerData.h"
-#include "IMUData.h"
 
 #if PLUTO_USE_SHELL
 const ShellCommand commands[] = {
@@ -42,6 +45,9 @@ const ShellCommand commands[] = {
 #if PLUTO_USE_BAROMETER
   {"barometer", cmd_barometer},
 #endif  /*PLUTO_USE_BAROMETER */
+#if HAL_USE_PWM
+  {"pwm", cmd_pwm},
+#endif	/*HAL_USE_PWM */
   {NULL, NULL}
 };
 
@@ -284,14 +290,14 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
     return ;
   }
   if((!strcasecmp(argv[0], "--raw")) || (!strcasecmp(argv[0], "-r"))) {
-    for(i = 0 ; i < 50 ; i++) {
+    for(i = 0 ; i < 200 ; i++) {
       readMagnetometerData(data) ;
       chprintf(bss, "Magnetometer Value:- %d %d %d\r\n", data[0], data[1], data[2]) ;
       chThdSleepMilliseconds(100) ;
     }
   }
   else if((!strcasecmp(argv[0], "--tesla")) || (!strcasecmp(argv[0], "-t"))) {
-    for(i = 0 ; i < 50 ; i++) {
+    for(i = 0 ; i < 200 ; i++) {
       float dat[3] ;
       magGetScaledData(dat) ;
       chprintf(bss, "Magnetometer Value:- %f uT", dat[0]) ;
@@ -302,7 +308,7 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
   }
   else if((!strcasecmp(argv[0], "--head")) || (!strcasecmp(argv[0], "-a"))) {
 	float heading ;
-    for(i = 0 ; i < 50 ; i++) {
+    for(i = 0 ; i < 200 ; i++) {
     	heading = getHeading() ;
     	chprintf(bss, "Heading :- %f\r\n", heading) ;
     	chThdSleepMilliseconds(100) ;
@@ -374,5 +380,72 @@ void cmd_barometer(BaseSequentialStream *bss, int argc, char *argv[]) {
 
 }
 #endif  /*PLUTO_USE_BAROMETER */
+
+#if HAL_USE_PWM
+void cmd_pwm(BaseSequentialStream *bss, int argc, char *argv[]) {
+
+  if(argc < 1) {
+	chprintf(bss, "Usage: pwm [options] [servo_number] [pulse_width]\r\nOptions:\r\n") ;
+	chprintf(bss, " --help   \t| -h\tDisplay help.\r\n") ;
+	chprintf(bss, " --enable \t| -e\tEnable the given Servo with a pulse width.\r\n") ;
+	chprintf(bss, " --disable\t| -d\tDisable the given Servo.\r\n\n") ;
+	chprintf(bss, " servo_number range:- 1 - 6\r\n\n") ;
+	chprintf(bss, " pulse_width  range:- 1000 - 2000\r\n\n") ;
+	return ;
+  }
+  if((!strcasecmp("--enable", argv[0])) || (!strcasecmp("-e", argv[0]))) {
+	if(argc != 3) {
+	  chprintf(bss, "Usage: pwm [options] [servo_number] [pulse_width]\r\nOptions:\r\n") ;
+	  chprintf(bss, " --help   \t| -h\tDisplay help.\r\n") ;
+	  chprintf(bss, " --enable \t| -e\tEnable the given Servo with a pulse width.\r\n") ;
+	  chprintf(bss, " --disable\t| -d\tDisable the given Servo.\r\n\n") ;
+	  chprintf(bss, " servo_number range:- 1 - 6\r\n\n") ;
+	  chprintf(bss, " pulse_width  range:- 1000 - 2000\r\n\n") ;
+	  return ;
+	}
+	int servo_no = atoi(argv[1]) ;
+	int width    = atoi(argv[2]) ;
+	if((servo_no < 1) || (servo_no > 6)) {
+	  chprintf(bss, "Illegal Value for [servo_number]\r\n") ;
+	  return ;
+	}
+	startServo(servo_no, (uint32_t)width) ;
+  }
+  else if((!strcasecmp("--disable", argv[0])) || (!strcasecmp("-d", argv[0]))) {
+	if(argc != 2) {
+	  chprintf(bss, "Usage: pwm [options] [servo_number] [pulse_width]\r\nOptions:\r\n") ;
+	  chprintf(bss, " --help   \t| -h\tDisplay help.\r\n") ;
+	  chprintf(bss, " --enable \t| -e\tEnable the given Servo with a pulse width.\r\n") ;
+	  chprintf(bss, " --disable\t| -d\tDisable the given Servo.\r\n\n") ;
+	  chprintf(bss, " servo_number range:- 1 - 6\r\n\n") ;
+      chprintf(bss, " pulse_width  range:- 1000 - 2000\r\n\n") ;
+	  return ;
+	}
+	int servo_no = atoi(argv[1]) ;
+	if((servo_no < 1) || (servo_no > 6)) {
+	  chprintf(bss, "Illegal Value for [servo_number]\r\n") ;
+	  return ;
+	}
+	stopServo(servo_no) ;
+  }
+  else if((!strcasecmp("--help", argv[0])) || (!strcasecmp("-h", argv[0]))) {
+	chprintf(bss, "Usage: pwm [options] [servo_number] [pulse_width]\r\nOptions:\r\n") ;
+	chprintf(bss, " --help   \t| -h\tDisplay this help.\r\n") ;
+	chprintf(bss, " --enable \t| -e\tEnable the given Servo with a pulse width.\r\n") ;
+	chprintf(bss, " --disable\t| -d\tDisable the given Servo.\r\n\n") ;
+	chprintf(bss, " servo_number range:- 1 - 6\r\n\n") ;
+	chprintf(bss, " pulse_width  range:- 1000 - 2000\r\n\n") ;
+  }
+  else {
+	chprintf(bss, "Usage: pwm [options] [servo_number] [pulse_width]\r\nOptions:\r\n") ;
+	chprintf(bss, " --help   \t| -h\tDisplay this help.\r\n") ;
+	chprintf(bss, " --enable \t| -e\tEnable the given Servo with a pulse width.\r\n") ;
+	chprintf(bss, " --disable\t| -d\tDisable the given Servo.\r\n\n") ;
+	chprintf(bss, " servo_number range:- 1 - 6\r\n\n") ;
+	chprintf(bss, " pulse_width  range:- 1000 - 2000\r\n\n") ;
+  }
+
+}
+#endif	/*HAL_USE_PWM */
 
 #endif  /*PLUTO_USE_SHELL */

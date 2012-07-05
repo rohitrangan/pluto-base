@@ -98,7 +98,6 @@ CSRC = $(PORTSRC) \
        src/plutoInit.c \
        src/shellCommands.c \
        src/floatingPoint.c \
-       src/heading.c \
        src/main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global

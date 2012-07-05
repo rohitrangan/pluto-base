@@ -19,7 +19,6 @@
 #include "plutoInit.h"
 #include "dcm_update.h"
 #include "shellCommands.h"
-#include "heading.h"
 
 /*
  * Application entry point.
@@ -51,7 +50,6 @@ int main(void) {
 #if HAL_USE_PWM
 	initPWM() ;
 	chThdSleepMilliseconds(10) ;
-	startPWMThread() ;
 #endif	/*HAL_USE_PWM */
 
 #if PLUTO_USE_FATFS
@@ -66,10 +64,9 @@ int main(void) {
   	shellInit() ;
 #endif	/*PLUTO_USE_SHELL */
 
-
-  	//startDCMThread((BaseSequentialStream *)&SD1) ;
-  	startHeadingThread((BaseSequentialStream *)&SD1) ;
+#if PLUTO_USE_DCM
   	startDCMThread((BaseSequentialStream *)&OUTPUT) ;
+#endif	/*PLUTO_USE_DCM */
 
   	while(TRUE) {
 #if PLUTO_USE_SHELL
