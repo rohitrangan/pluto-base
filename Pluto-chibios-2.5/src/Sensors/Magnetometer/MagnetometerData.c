@@ -8,41 +8,10 @@
 
 #include "ch.h"
 #include "hal.h"
+#include "utils.h"
 #include "hmc5883.h"
 #include "IMUData.h"
 #include "MagnetometerData.h"
-
-inline float my_atan2f(float y, float x) {
-
-	/*if(x > 0)
-		return atanf(y / x) ;
-	else if((y >= 0) && (x < 0))
-		return (atanf(y / x) + M_PI) ;
-	else if((y < 0) && (x < 0))
-		return (atanf(y / x) - M_PI) ;
-	else if((y > 0) && (x == 0))
-		return M_PI_2 ;
-	else if((y < 0) && (x == 0))
-		return (-1.0 * M_PI_2) ;
-	else if((y == 0) && (x == 0))
-		return -32768.0 ;
-	else
-		return -32768.0 ;*/
-
-	if(x < 0)
-		return (M_PI - atanf(y / x)) ;
-	else if((x > 0) && (y < 0))
-		return (-1.0 * atanf(y / x)) ;
-	else if((x > 0) && (y > 0))
-		return (M_TWOPI - atan(y / x)) ;
-	else if((x == 0) && (y < 0))
-		return M_PI_2 ;
-	else if((x == 0) && (y > 0))
-		return (3 * M_PI_2) ;
-	else
-		return -32768.0 ;
-
-}
 
 /*The raw values are stored in val. To convert to microTesla,
  *multiply val[i] by MAG_RANGE.
@@ -104,11 +73,11 @@ float getHeading(void) {
 	sinRoll  = sinf(angles[1]) ;
 
 	magGetScaledData(mag) ;
-	mag[0] *= -1.0 ;
-	mag[1] *= -1.0 ;
 
-	float Xh = (mag[0] * cosPitch) + (mag[1] * sinPitch * sinRoll) - (mag[2] * sinPitch * cosRoll) ;
-	float Yh = (mag[1] * cosRoll) + (mag[2] * sinRoll) ;
+	/*float Xh = (mag[0] * cosPitch) + (mag[1] * sinPitch * sinRoll) - (mag[2] * sinPitch * cosRoll) ;
+	float Yh = (mag[1] * cosRoll) + (mag[2] * sinRoll) ;*/
+	float Xh = (mag[0] * cosPitch) + (mag[2] * sinPitch) ;
+	float Yh = (mag[0] * sinRoll * sinPitch) + (mag[1] * cosRoll) - (mag[2] * sinRoll * cosPitch) ;
 	heading = my_atan2f(Yh, Xh) ;
 
 	return (heading * 180.0 / M_PI) ;

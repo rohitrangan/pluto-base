@@ -290,14 +290,14 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
     return ;
   }
   if((!strcasecmp(argv[0], "--raw")) || (!strcasecmp(argv[0], "-r"))) {
-    for(i = 0 ; i < 200 ; i++) {
+    for(i = 0 ; i < 50 ; i++) {
       readMagnetometerData(data) ;
       chprintf(bss, "Magnetometer Value:- %d %d %d\r\n", data[0], data[1], data[2]) ;
       chThdSleepMilliseconds(100) ;
     }
   }
   else if((!strcasecmp(argv[0], "--tesla")) || (!strcasecmp(argv[0], "-t"))) {
-    for(i = 0 ; i < 200 ; i++) {
+    for(i = 0 ; i < 50 ; i++) {
       float dat[3] ;
       magGetScaledData(dat) ;
       chprintf(bss, "Magnetometer Value:- %f uT", dat[0]) ;
@@ -308,7 +308,7 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
   }
   else if((!strcasecmp(argv[0], "--head")) || (!strcasecmp(argv[0], "-a"))) {
 	float heading ;
-    for(i = 0 ; i < 200 ; i++) {
+    for(i = 0 ; i < 50 ; i++) {
     	heading = getHeading() ;
     	chprintf(bss, "Heading :- %f\r\n", heading) ;
     	chThdSleepMilliseconds(100) ;

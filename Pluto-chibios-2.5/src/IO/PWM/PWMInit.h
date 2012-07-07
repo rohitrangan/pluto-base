@@ -9,7 +9,7 @@
 #define PWMINIT_H_
 
 #if HAL_USE_PWM
-/*The definition of the servos and which pins they are mapped to.
+/*The definition of the servo outputs and which pins they are mapped to.
  *
  *SERVO1 (PB5 ) --> Timer 3 Channel 2 (Alternate Function 2)
  *SERVO2 (PA10) --> Timer 1 Channel 3 (Alternate Function 1)

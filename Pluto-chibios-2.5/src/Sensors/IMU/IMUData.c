@@ -8,16 +8,15 @@
 
 #include "IMUData.h"
 #include "MPU60X0.h"
+#include "vector3d.h"
 
 /*If Mode is ACCEL_DATA then the accelerometer values
  *are read, mode is GYRO_DATA then gyrometer values
  *are read, if mode is TEMP_DATA then the temperature
  *value is read. val stores the values of the sensor
  *data.
- *TODO - rohitrangan output the data in engineering format.
  */
 void readIMUData(uint8_t mode, float val[3]) {
-
 	uint8_t txbuf[1], rxbuf[6], i ;
 	int16_t tmp[3] ;
 	msg_t status = RDY_OK ;
@@ -74,29 +73,27 @@ void readIMUData(uint8_t mode, float val[3]) {
 
 		default 	   	   : return ;
 	}
-
 }
 
 /*This function calculates the pitch, roll and
  *yaw. It calls readAccelerometerData inside.
  *The angles are stored in the order pitch,
  *roll and yaw.
+ *
+ *TODO rohitrangan Merge Gyro Data.
  */
 void eulerAngles(float angles[3]) {
-
 	float acc[3] ;
 	readIMUData(ACCEL_DATA, acc) ;
-	chThdSleepMilliseconds(10) ;
+	vector3d_normalize(acc) ;
 
-	angles[1] = atanf(((float)acc[1] / (float)acc[2])) ;
-	angles[1] *= 180.0 ;
-	angles[1] /= M_PI ;
-
-	float g = sqrt((pow((float)acc[0], 2) + pow((float)acc[1], 2) + pow((float)acc[2], 2))) ;
-
-	angles[0] = asinf((-1.0 * (float)acc[0] / g)) ;
+	angles[0] = asinf((-1.0f *acc[0])) ;
 	angles[0] *= 180.0 ;
 	angles[0] /= M_PI ;
+
+	angles[1] = atanf((acc[1] / acc[2])) ;
+	angles[1] *= 180.0 ;
+	angles[1] /= M_PI ;
 
 	angles[2] = 0.0 ;
 }

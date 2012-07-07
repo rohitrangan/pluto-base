@@ -12,6 +12,7 @@
 #include "shell.h"
 #include "chprintf.h"
 
+#include "utils.h"
 #include "fsInit.h"
 #include "PWMInit.h"
 #include "IMUData.h"
@@ -39,45 +40,44 @@ int main(void) {
 	/*
 	 * Activates the SerialDriver for Output and I2C Drivers.
 	 */
-	OUTPUTInit() ;
-	chThdSleepMilliseconds(10) ;
-	chprintf((BaseSequentialStream *)&OUTPUT, "\r\nInitializing...\r\n") ;
+	OUTPUTInit();
+	chThdSleepMilliseconds(10);
+	chprintf((BaseSequentialStream *)&OUTPUT, "\r\nInitializing...\r\n");
 #if PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
-	I2CInitialize() ;
-	chThdSleepMilliseconds(10) ;
+	I2CInitialize();
+	chThdSleepMilliseconds(10);
 #endif	/*PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
 
 #if HAL_USE_PWM
-	initPWM() ;
-	chThdSleepMilliseconds(10) ;
+	initPWM();
+	chThdSleepMilliseconds(10);
 #endif	/*HAL_USE_PWM */
 
 #if PLUTO_USE_FATFS
-  	startMMC() ;
-  	chThdSleepMilliseconds(10) ;
+	startMMC();
+	chThdSleepMilliseconds(10);
 #endif	/*PLUTO_USE_FATFS */
-  	/*
-  	 * Shell manager initialization.
-  	 */
+	/*
+	 * Shell manager initialization.
+	 */
 #if PLUTO_USE_SHELL
-	Thread *shelltp = NULL ;
-  	shellInit() ;
+	Thread *shelltp = NULL;
+	shellInit();
 #endif	/*PLUTO_USE_SHELL */
 
 #if PLUTO_USE_DCM
-  	startDCMThread((BaseSequentialStream *)&OUTPUT) ;
+	startDCMThread((BaseSequentialStream *)&OUTPUT);
 #endif	/*PLUTO_USE_DCM */
-
-  	while(TRUE) {
+	while (TRUE) {
 #if PLUTO_USE_SHELL
-  		if(!shelltp)
-  			shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO) ;
-  		else if(chThdTerminated(shelltp)) {
-  			chThdRelease(shelltp) ;    /* Recovers memory of the previous shell.   */
-  			shelltp = NULL ;		   /* Triggers spawning of a new shell.        */
-  		}
+		if (!shelltp)
+			shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO);
+		else if (chThdTerminated(shelltp)) {
+			chThdRelease(shelltp); /* Recovers memory of the previous shell.   */
+			shelltp = NULL; /* Triggers spawning of a new shell.        */
+		}
 #endif	/*PLUTO_USE_SHELL */
-  	}
+	}
 
-  	return 0;
+	return 0;
 }

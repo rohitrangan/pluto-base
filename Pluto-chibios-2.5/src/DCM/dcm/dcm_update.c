@@ -8,7 +8,9 @@
 #include <math.h>
 
 #include "ch.h"
+#include "hal.h"
 #include "dcm.h"
+#include "utils.h"
 #include "IMUData.h"
 #include "chprintf.h"
 #include "plutoconf.h"
@@ -30,9 +32,9 @@ static msg_t Update(void *arg) {
 
 	float dcmMatrix[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0 ,1}} ;
 	chRegSetThreadName("DCMUpdate");
-	while(TRUE){
-		float interval = 110.0f, pitch, roll, yaw; /* Time between 2 measurements */
-
+	while(TRUE) {
+		float interval, pitch, roll, yaw; /* Time between 2 measurements */
+		uint32_t start = halGetCounterValue() ;
 		readIMUData(ACCEL_DATA, acc_final) ; /* Reads values from the accelerometer */
 		chThdSleepMilliseconds(10) ;
 
@@ -41,6 +43,7 @@ static msg_t Update(void *arg) {
 
 		magGetScaledData(mag_final) ; /* Reads values from the magnetometer */
 		chThdSleepMilliseconds(20) ;
+		interval = convertCounterToMilliseconds(start, halGetCounterValue()) / 1000.0f ;
 
 		dcmUpdate(dcmMatrix, acc_final[0], acc_final[1], acc_final[2], gyro[0], gyro[1], gyro[2], mag_final[0], mag_final[1], mag_final[2], interval);
 
@@ -53,14 +56,15 @@ static msg_t Update(void *arg) {
 			roll  = M_PI - (-asinf(dcmMatrix[2][1])) ;
 		}
 
-		yaw = atan2f(dcmMatrix[1][0], (-1 * dcmMatrix[0][0])) ;
+		yaw = my_atan2f(dcmMatrix[1][0], dcmMatrix[0][0]) ;
 		pitch = (180 * pitch) / M_PI ;
 		roll  = (180 * roll ) / M_PI ;
 		yaw   = (180 * yaw  ) / M_PI ;
 
-		chprintf((BaseSequentialStream *)arg,"Pitch : %f\t\t", pitch);
-		chprintf((BaseSequentialStream *)arg,"Roll  : %f\t\t", roll );
-		chprintf((BaseSequentialStream *)arg,"Yaw   : %f\r\n", yaw  );
+		chprintf((BaseSequentialStream *)arg, "Interval:- %f ms ", interval) ;
+		chprintf((BaseSequentialStream *)arg, "Pitch : %f\t\t", pitch);
+		chprintf((BaseSequentialStream *)arg, "Roll  : %f\t\t", roll );
+		chprintf((BaseSequentialStream *)arg, "Yaw   : %f\r\n", yaw  );
 
 		chThdSleepMilliseconds(100) ;
 	}

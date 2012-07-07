@@ -15,66 +15,65 @@
  */
 /*pwmcfg1 - to be used for PWM1. */
 static PWMConfig pwmcfg1 = {
-		PWM_CLK_FREQUENCY,
-		PWM_PERIOD,
-		NULL,
-		{											/* CH3 of Timer1 for is available for PWM. Enable it and disable the rest */
-				{PWM_OUTPUT_DISABLED, NULL},
-				{PWM_OUTPUT_DISABLED, NULL},
-				{PWM_OUTPUT_ACTIVE_HIGH, NULL},
-				{PWM_OUTPUT_DISABLED, NULL}
-		},
-		/*HW Dependent Part */
-		0,
-		0
+	PWM_CLK_FREQUENCY,
+	PWM_PERIOD,
+	NULL,
+	{											/* CH3 of Timer1 for is available for PWM. Enable it and disable the rest */
+		{PWM_OUTPUT_DISABLED, NULL},
+		{PWM_OUTPUT_DISABLED, NULL},
+		{PWM_OUTPUT_ACTIVE_HIGH, NULL},
+		{PWM_OUTPUT_DISABLED, NULL}
+	},
+	/*HW Dependent Part */
+	0,
+	0
 };
 /*pwmcfg2 - to be used for PWM2. */
 static PWMConfig pwmcfg2 = {
-		PWM_CLK_FREQUENCY,
-		PWM_PERIOD,
-		NULL,
-		{											/* CH4 of Timer for is available for PWM. Enable it and disable the rest. */
-				{PWM_OUTPUT_DISABLED, NULL},
-				{PWM_OUTPUT_DISABLED, NULL},
-				{PWM_OUTPUT_DISABLED, NULL},
-				{PWM_OUTPUT_ACTIVE_HIGH, NULL}
-		},
-		/*HW Dependent Part*/
-		0,
-		0
+	PWM_CLK_FREQUENCY,
+	PWM_PERIOD,
+	NULL,
+	{											/* CH4 of Timer for is available for PWM. Enable it and disable the rest. */
+		{PWM_OUTPUT_DISABLED, NULL},
+		{PWM_OUTPUT_DISABLED, NULL},
+		{PWM_OUTPUT_DISABLED, NULL},
+		{PWM_OUTPUT_ACTIVE_HIGH, NULL}
+	},
+	/*HW Dependent Part*/
+	0,
+	0
 };
 
 /*pwmcfg3 - to be used for PWM3. */
 static PWMConfig pwmcfg3 = {
-		PWM_CLK_FREQUENCY,
-		PWM_PERIOD,
-		NULL,
-		{											/* CH2, CH3 and CH4 of Timer for are available for PWM. Enable them and disable the rest. */
-				{PWM_OUTPUT_DISABLED, NULL},
-				{PWM_OUTPUT_ACTIVE_HIGH, NULL},
-				{PWM_OUTPUT_ACTIVE_HIGH, NULL},
-				{PWM_OUTPUT_ACTIVE_HIGH, NULL}
-		},
-		/*HW Dependent Part */
-		0,
-		0
+	PWM_CLK_FREQUENCY,
+	PWM_PERIOD,
+	NULL,
+	{											/* CH2, CH3 and CH4 of Timer for are available for PWM. Enable them and disable the rest. */
+		{PWM_OUTPUT_DISABLED, NULL},
+		{PWM_OUTPUT_ACTIVE_HIGH, NULL},
+		{PWM_OUTPUT_ACTIVE_HIGH, NULL},
+		{PWM_OUTPUT_ACTIVE_HIGH, NULL}
+	},
+	/*HW Dependent Part */
+	0,
+	0
 };
 
 /*pwmcfg8 - to be used for PWM8..i.e timer 8 */
 static PWMConfig pwmcfg8 = {
-		PWM_CLK_FREQUENCY,
-		PWM_PERIOD,
-
-		NULL,
-		{											/*CH3 of Timer 8 are available for PWM. Enable it and disable the rest. */
-				{PWM_OUTPUT_DISABLED, NULL},
-				{PWM_OUTPUT_DISABLED, NULL},
-				{PWM_OUTPUT_ACTIVE_HIGH, NULL},
-				{PWM_OUTPUT_DISABLED, NULL}
-		},
-		/* HW dependent part.*/
-		0,
-		0   /* STM32_PWM_USE_ADVANCED is enabled which adds an additional field. */
+	PWM_CLK_FREQUENCY,
+	PWM_PERIOD,
+	NULL,
+	{											/*CH3 of Timer 8 are available for PWM. Enable it and disable the rest. */
+		{PWM_OUTPUT_DISABLED, NULL},
+		{PWM_OUTPUT_DISABLED, NULL},
+		{PWM_OUTPUT_ACTIVE_HIGH, NULL},
+		{PWM_OUTPUT_DISABLED, NULL}
+	},
+	/* HW dependent part.*/
+	0,
+	0   /* STM32_PWM_USE_ADVANCED is enabled which adds an additional field. */
 };
 
 
