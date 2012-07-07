@@ -125,7 +125,7 @@ void dcm_rotate(float dcm[3][3], float w[3]){
  * angular rates in rad/s (scale is MATTER),
  * magnetic flux in uT (scale does not matter because values will be normalized),
  * time in s */
-void dcmUpdate(float dcmEst[3][3], float xacc,  float yacc,  float zacc, float xgyro, float ygyro, float zgyro, float xmag,  float ymag,  float zmag, float imu_interval)
+void dcmUpdate(float dcmEst[3][3], float xacc, float yacc, float zacc, float xgyro, float ygyro, float zgyro, float xmag, float ymag, float zmag, float imu_interval)
 {
   uint32_t i;
   uint32_t imu_step = 0;                /* incremented on each call to imu_update */
@@ -133,9 +133,6 @@ void dcmUpdate(float dcmEst[3][3], float xacc,  float yacc,  float zacc, float x
   float Imag[3];  //I(b) vector accordng to magnetometer in body's coordinates
   accweight = 0.01 ;
   magweight = 0.01 ;
-
-  //interval since last call
-  //imu_interval_ms = itg3200_period;
 
   //---------------
   // I,J,K unity vectors of global coordinate system I-North,J-West,K-zenith
@@ -157,10 +154,6 @@ void dcmUpdate(float dcmEst[3][3], float xacc,  float yacc,  float zacc, float x
   Acc can estimate global K vector(zenith) measured in body's coordinate
   systems (the reverse of gravitation vector) */
 
-//  Kacc[0] = -xacc;
-//  Kacc[1] = -yacc;
-//  Kacc[2] = -zacc;
-
   Kacc[0] = xacc;
   Kacc[1] = yacc;
   Kacc[2] = zacc;
@@ -178,7 +171,7 @@ void dcmUpdate(float dcmEst[3][3], float xacc,  float yacc,  float zacc, float x
   //calculate correction vector to bring dcmEst's I vector closer
   // to Mag vector (I vector according to magnetometer)
   float wM[3];
-  //in the absense of magnetometer let's assume North vector (I) is
+  //in the absence of magnetometer let's assume North vector (I) is
   // always in XZ plane of the device (y coordinate is 0)
   //    Imag[0] = sqrtf(1 - dcmEst[0][2] * dcmEst[0][2]);
   //    Imag[1] = 0;
@@ -193,7 +186,7 @@ void dcmUpdate(float dcmEst[3][3], float xacc,  float yacc,  float zacc, float x
     mag_modulus = vector3d_modulus(Imag);
 
   /* ignore magnetometer readings if external magnetic field too strong */
-  if (((vector3d_modulus(Imag) / mag_modulus) - 1) < MAG_ERR_MAX){
+  if(((vector3d_modulus(Imag) / mag_modulus) - 1) < MAG_ERR_MAX){
     float tmpM[3];
     vector3d_normalize(Imag);
     vector3d_cross(Kacc, Imag, tmpM);
@@ -234,7 +227,6 @@ void dcmUpdate(float dcmEst[3][3], float xacc,  float yacc,  float zacc, float x
       w[i] = (float)(w[i] + 0.01*wA[i] + 0.01*wM[i]) / (1.0f + 0.01 + 0.01);
     }
   }
-
   dcm_rotate(dcmEst, w);
   imu_step++;
 }
