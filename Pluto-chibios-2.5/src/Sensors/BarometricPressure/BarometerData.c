@@ -5,32 +5,27 @@
  *the barometer.
  */
 #include<math.h>
+#include "pluto.h"
 
-#include "ch.h"
-#include "hal.h"
-#include "BMP180.h"
-#include "BarometerData.h"
-
+#if PLUTO_USE_BAROMETER
 /*If mode is 1, the function returns the temperature value
  *in degrees Celsius. If mode is 2, the function returns
  *the pressure value in Pascals. No sleeps need to be given
  *when calling this function.
  */
-float readBarometerData(uint8_t mode) {
+void readBarometerData(BaroData *baro, uint8_t mode) {
 	uint8_t bmp_txbuf[2], bmp_rxbuf[3] ;
-	int16_t reg1[8] ;
-	uint16_t reg2[3] ;
 
 	if(mode == BARO_TEMP_DATA) {
 		uint32_t ut ;
-		int32_t x1, x2, b5, tval ;
+		int32_t x1, x2, b5 ;
 		bmp_txbuf[0] = BOSCH_CTL ;
 		bmp_txbuf[1] = BOSCH_TEMP ;
 
 		i2cAcquireBus(&I2C_BMP) ;
 		i2cMasterTransmit(&I2C_BMP,  BMP_ADDR, bmp_txbuf, 2, bmp_rxbuf, 0) ;
 		i2cReleaseBus(&I2C_BMP) ;
-		chThdSleepMilliseconds(DELAY_TEMP) ;
+		chThdSleepMilliseconds(baro->DELAY_TEMP) ;
 
 	    bmp_txbuf[0] = BOSCH_ADC_MSB ;
 	    i2cAcquireBus(&I2C_BMP) ;
@@ -38,18 +33,16 @@ float readBarometerData(uint8_t mode) {
 	    i2cReleaseBus(&I2C_BMP) ;
 
 	    ut = (bmp_rxbuf[0] << 8) + bmp_rxbuf[1] ;
-	    read_bmp180_coefficient(reg1, reg2) ;
 	    /*All calculations here are black magic from the
 	     *BMP180 Datasheet. DO NOT CHANGE.
 	     */
-	    x1 = (ut - reg2[2]) * reg2[1] >> 15 ;
-	    x2 = ((int32_t)reg1[6] << 11) / (x1 + reg1[7]) ;
+	    x1 = (ut - baro->AC6) * baro->AC5 >> 15 ;
+	    x2 = ((int32_t)baro->MC << 11) / (x1 + baro->MD) ;
 	    b5 = x1 + x2 ;
-	    tval = (b5 + 8) >> 4 ;
-	    return ((float)tval / 10.0) ;
+	    baro->TEMP = (float)((b5 + 8) >> 4) / 10.0f ;
 	}
 	else if(mode == BARO_PRESSURE_DATA) {
-		int32_t x1, x2, x3, b3, b5, b6, p, pval ;
+		int32_t x1, x2, x3, b3, b5, b6, p ;
 		uint32_t b4, b7, up, ut ;
 
 		/*To measure temperature as it is required for
@@ -61,7 +54,7 @@ float readBarometerData(uint8_t mode) {
 		i2cAcquireBus(&I2C_BMP) ;
 		i2cMasterTransmit(&I2C_BMP,  BMP_ADDR, bmp_txbuf, 2, bmp_rxbuf, 0) ;
 		i2cReleaseBus(&I2C_BMP) ;
-		chThdSleepMilliseconds(DELAY_TEMP) ;
+		chThdSleepMilliseconds(baro->DELAY_TEMP) ;
 
 		bmp_txbuf[0] = BOSCH_ADC_MSB ;
 		i2cAcquireBus(&I2C_BMP) ;
@@ -72,14 +65,16 @@ float readBarometerData(uint8_t mode) {
 
 		/*Pressure measurement starts now */
 		bmp_txbuf[0] = BOSCH_CTL ;
-		bmp_txbuf[1] = MEASUREMENT_MODE ;
+		bmp_txbuf[1] = baro->MEASUREMENT_MODE ;
 
 		i2cAcquireBus(&I2C_BMP) ;
 		i2cMasterTransmit(&I2C_BMP,  BMP_ADDR, bmp_txbuf, 2, bmp_rxbuf, 0) ;
 		i2cReleaseBus(&I2C_BMP) ;
 
-		/* Wait until pressure measurement is done. Time required for this depends on selected mode. */
-		chThdSleepMilliseconds(DELAY_PRESSURE) ;
+		/* Wait until pressure measurement is done. Time required
+		 *for this depends on selected mode.
+		 */
+		chThdSleepMilliseconds(baro->DELAY_PRESSURE) ;
 
 	    bmp_txbuf[0] = BOSCH_ADC_MSB ;
 
@@ -90,24 +85,23 @@ float readBarometerData(uint8_t mode) {
 	    /*All calculations here are black magic from the
 	     *BMP180 Datasheet. DO NOT CHANGE.
 	     */
-	    up = ((bmp_rxbuf[0] << 16) + (bmp_rxbuf[1] << 8) + bmp_rxbuf[2]) >> (8 - OSS) ;
-	    read_bmp180_coefficient(reg1, reg2) ;
+	    up = ((bmp_rxbuf[0] << 16) + (bmp_rxbuf[1] << 8) + bmp_rxbuf[2]) >> (8 - baro->OSS) ;
 
-	    x1 = (ut - reg2[2]) * reg2[1] >> 15 ;
-	    x2 = ((int32_t)reg1[6] << 11) / (x1 + reg1[7]) ;
+	    x1 = (ut - baro->AC6) * baro->AC5 >> 15 ;
+	    x2 = ((int32_t)baro->MC << 11) / (x1 + baro->MD) ;
 	    b5 = x1 + x2 ;
 
 	    b6 = b5 - 4000 ;
-	    x1 = (reg1[4] * (b6 * b6 >> 12)) >> 11 ;
-	    x2 = reg1[1] * b6 >> 11 ;
+	    x1 = (baro->B2 * (b6 * b6 >> 12)) >> 11 ;
+	    x2 = baro->AC2 * b6 >> 11 ;
 	    x3 = x1 + x2 ;
-	    b3 = ((((int32_t)reg1[0] * 4 + x3) << OSS) + 2) >> 2 ;
+	    b3 = ((((int32_t)baro->AC1 * 4 + x3) << baro->OSS) + 2) >> 2 ;
 
-	    x1 = reg1[2] * b6 >> 13 ;
-	    x2 = (reg1[3] * (b6 * b6 >> 12)) >> 16 ;
+	    x1 = baro->AC3 * b6 >> 13 ;
+	    x2 = (baro->B1 * (b6 * b6 >> 12)) >> 16 ;
 	    x3 = ((x1 + x2) + 2) >> 2 ;
-	    b4 = (reg2[0] * (uint32_t)(x3 + 32768)) >> 15 ;
-	    b7 = ((uint32_t)up - b3) * (50000 >> OSS) ;
+	    b4 = (baro->AC4 * (uint32_t)(x3 + 32768)) >> 15 ;
+	    b7 = ((uint32_t)up - b3) * (50000 >> baro->OSS) ;
 
 	    if(b7 < 0x80000000)
 	    	p = (b7 * 2) / b4 ;
@@ -117,19 +111,18 @@ float readBarometerData(uint8_t mode) {
 	    x1 = (p >> 8) * (p >> 8) ;
 	    x1 = (x1 * 3038) >> 16 ;
 	    x2 = (-7357 * p) >> 16 ;
-	    pval = p + ((x1 + x2 + 3791) >> 4) ;
-	    return ((float)pval * 1.0) ;
+	    baro->PRESSURE = (float)(p + ((x1 + x2 + 3791) >> 4)) ;
 	}
 	else {
-		return 0.0 ;
+		return ;
 	}
 }
 
 /*This function returns the absolute altitude above sea level
  *in meters.
  */
-float getAltitude(void) {
-	float pressure = readBarometerData(BARO_PRESSURE_DATA) ;
-	return (44330.0 * (1 - (pow((pressure / SEA_LEVEL_PRESSURE), EXPONENT)))) ;
+float getAltitude(BaroData *baro) {
+	readBarometerData(baro, BARO_PRESSURE_DATA) ;
+	return (44330.0 * (1 - (pow((baro->PRESSURE / SEA_LEVEL_PRESSURE), EXPONENT)))) ;
 }
-
+#endif	/*PLUTO_USE_BAROMETER */

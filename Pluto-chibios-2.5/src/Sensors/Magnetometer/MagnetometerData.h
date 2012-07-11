@@ -8,25 +8,27 @@
 #ifndef MAGNETOMETERDATA_H_
 #define MAGNETOMETERDATA_H_
 
-#include "hmc5883.h"
+#include "HMC5883.h"
+#include "plutoconf.h"
+
+#if PLUTO_USE_MAGNETOMETER
 #define MAG_RANGE hmc_range
 
 /*The raw values are stored in val. To convert to microTesla,
  *multiply val[i] by MAG_RANGE.
  */
-void readMagnetometerData(int16_t val[3]) ;
+void readMagnetometerData(MagData *magd) ;
 
-/*This function calculates the magnetometer data in uT and
- *is stored in val.
- */
-void magGetScaledData(float val[3]) ;
-
+#if PLUTO_USE_IMU
 /*Returns the heading of the board in degrees.
  *000 -> North.
  *090 -> East.
  *180 -> South.
  *270 -> West.
  */
-float getHeading(void) ;
+float getHeading(IMUData *imudata, MagData *magd) ;
+#endif 	/*PLUTO_USE_IMU */
+
+#endif	/*PLUTO_USE_MAGNETOMETER */
 
 #endif /*MAGNETOMETERDATA_H_ */

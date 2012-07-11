@@ -11,12 +11,12 @@
 #if HAL_USE_ICU
 /*The definition of the RC inputs and which pins they are mapped to.
  *
- *RC1 (PA7 ) --> Timer 3 Channel 2 (Alternate Function 2)
- *RC2 (PA6 ) --> Timer 1 Channel 3 (Alternate Function 1)
- *RC3 (PB14) --> Timer 8 Channel 3 (Alternate Function 3)
- *RC4 (PB15) --> Timer 2 Channel 4 (Alternate Function 1)
- *RC5 (PC6 ) --> Timer 3 Channel 4 (Alternate Function 2)
- *RC6 (PC7 ) --> Timer 3 Channel 3 (Alternate Function 2)
+ *RC1 (PA7 )
+ *RC2 (PA6 )
+ *RC3 (PB14)
+ *RC4 (PB15)
+ *RC5 (PC6 )
+ *RC6 (PC7 )
  */
 #define RC1_PORT		GPIOA
 #define RC1_PIN			7
@@ -31,7 +31,11 @@
 #define RC6_PORT		GPIOC
 #define RC6_PIN			7
 
-#define ICU_CLK_FREQUENCY		1000000
+#define ICU_CLK_FREQUENCY		100000
+
+extern icucnt_t last_width[6], last_period[6] ;
+
+void initICU(void) ;
 #endif	/*HAL_USE_ICU */
 
 #endif	/*ICUINIT_H_ */

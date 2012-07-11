@@ -8,10 +8,7 @@
 #include<stdlib.h>
 #include<math.h>
 
-#include "ch.h"
-#include "hal.h"
-#include "chprintf.h"
-#include "plutoconf.h"
+#include "pluto.h"
 
 #if CORTEX_USE_FPU && PLUTO_USE_FPUTEST
 float fpuTest(BaseSequentialStream *bss, char *operand1, char oper, char *operand2) {

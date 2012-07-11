@@ -4,9 +4,7 @@
  *This file contains the definitons for fsInit.c
  */
 
-#include "plutoconf.h"
-#include "hal.h"
-#include "ff.h"
+#include "pluto.h"
 
 #ifndef FSINIT_H_
 #define FSINIT_H_

@@ -95,7 +95,7 @@ CSRC = $(PORTSRC) \
        $(FATFSSRC) \
        $(DCMSRC) \
        src/fsInit.c \
-       src/plutoInit.c \
+       src/pluto.c \
        src/shellCommands.c \
        src/floatingPoint.c \
        src/utils.c \

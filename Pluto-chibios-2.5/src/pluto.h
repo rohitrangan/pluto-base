@@ -7,9 +7,38 @@
 
 #include "plutoconf.h"
 
-#ifndef PLUTOINIT_H_
-#define PLUTOINIT_H_
+#ifndef PLUTO_H_
+#define PLUTO_H_
 
+#include "ch.h"
+#include "ff.h"
+#include "hal.h"
+#include "shell.h"
+#include "chprintf.h"
+
+#include "dcm.h"
+#include "utils.h"
+#include "fsInit.h"
+#include "PWMInit.h"
+#include "ICUInit.h"
+#include "IMUData.h"
+#include "vector3d.h"
+#include "Calibrate.h"
+#include "PWMEnable.h"
+#include "plutoconf.h"
+#include "dcm_update.h"
+#include "shellCommands.h"
+#include "BarometerData.h"
+#include "MagnetometerData.h"
+
+typedef struct {
+	IMUConfig 	*imucfg   ;
+	IMUData 	*imudata  ;
+	MagConfig 	*magcfg   ;
+	MagData 	*magdata  ;
+	uint8_t 	barocfg   ;
+	BaroData 	*barodata ;
+}Sensors;
 /*Only done as MMC needs this */
 #if PLUTO_USE_FATFS
 extern const SPIConfig ls_spicfg ;
@@ -23,6 +52,8 @@ void SPI2Init(void) ;
 #if PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_IMU
 /*Initializes I2C Drivers 1 and 3 */
 void I2CInitialize(void) ;
+
+void SensorInitialize(Sensors *sensor) ;
 #endif	/*PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_IMU */
 
 #if PLUTO_USE_SCANNER
@@ -32,4 +63,4 @@ void i2cScanner(I2CDriver *FindI2C, const char *driverName) ;
 /*Initializes SerialDriver1 for Output and Input */
 void OUTPUTInit(void) ;
 
-#endif /* PLUTOINIT_H_ */
+#endif /* PLUTO_H_ */

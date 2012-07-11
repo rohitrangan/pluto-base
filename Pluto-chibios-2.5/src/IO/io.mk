@@ -3,8 +3,10 @@
 # List of all IO files.
 
 IOSRC = ${IODIR}/PWM/PWMInit.c \
-		${IODIR}/PWM/PWMEnable.c
+		${IODIR}/PWM/PWMEnable.c \
+		${IODIR}/ICU/ICUInit.c
 
 # Include Directories.
 
-IOINC = ${IODIR}/PWM
+IOINC = ${IODIR}/PWM \
+		${IODIR}/ICU

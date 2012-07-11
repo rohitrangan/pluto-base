@@ -8,12 +8,15 @@
 #ifndef HMC5883_H_
 #define HMC5883_H_
 
+#include "plutoconf.h"
+
+#if PLUTO_USE_MAGNETOMETER
 #define HMC_ADDR	0b0011110
 #define I2C_HMC		I2CD3
 
 #define CONFIG_A	0x00			/* Read-Write Access. Sets Data Output rate and Measurement Configuration */
 #define CONFIG_B	0x01			/* Read-Write Access. Sets Device Gain i.e. Range of Magnetic Field */
-#define MODE		0x02			/* Read-Write Access. Sets Operating mode of the device. Continuous, Single and Idle */
+#define OP_MODE		0x02			/* Read-Write Access. Sets Operating mode of the device. Continuous, Single and Idle */
 #define OUT_X_MSB	0x03			/* Read Only */
 #define OUT_X_LSB	0x04			/* Read Only */
 #define OUT_Z_MSB	0x05			/* Read Only */
@@ -58,7 +61,28 @@
 #define OP_MODE_SINGLE		1
 #define OP_MODE_IDLE		2
 
-extern float hmc_range;
-void initialize_HMC(uint8_t average, uint8_t ODR, uint8_t Mode, uint8_t Gain, uint8_t OP_Mode);
+typedef struct {
+	uint8_t SAMPLE_AVG ;
+	uint8_t ODR ;
+	uint8_t MODE ;
+	uint8_t RANGE ;
+	uint8_t MEASUREMENT_MODE ;
+}MagConfig;
+
+typedef struct {
+	float RANGE ;
+	int16_t RAW_MAG_X ;
+	int16_t RAW_MAG_Y ;
+	int16_t RAW_MAG_Z ;
+	float MAG_X ;
+	float MAG_Y ;
+	float MAG_Z ;
+	uint8_t MEASUREMENT_MODE ;
+}MagData;
+
+extern MagData MD1 ;
+
+void initialize_HMC(MagData *magd, MagConfig *magcfg) ;
+#endif	/*PLUTO_USE_MAGNETOMETER */
 
 #endif /* HMC5883_H_ */

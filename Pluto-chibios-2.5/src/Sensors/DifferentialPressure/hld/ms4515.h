@@ -8,6 +8,8 @@
 #ifndef MS4515_H_
 #define MS4515_H_
 
+#include "plutoconf.h"
+#if PLUTO_USE_DIFFP
 /*Bi-directional bus lines are implemented by the devices (master and slave)
  * using open-drain output stages and a pull-up resistor connected to the
  * positive supply voltage*/
@@ -23,5 +25,6 @@ void read_ms4515(void);
  * 00 indicates normal operation
  * 10 indicates stale data that has already been fetched
  */
+#endif	/*PLUTO_USE_DIFFP */
 
 #endif /* MS4515_H_ */

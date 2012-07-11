@@ -7,19 +7,12 @@
 
 #include <math.h>
 
-#include "ch.h"
-#include "hal.h"
-#include "dcm.h"
-#include "utils.h"
-#include "IMUData.h"
-#include "chprintf.h"
-#include "plutoconf.h"
-#include "MagnetometerData.h"
+#include "pluto.h"
 
 // TODO - Print the gyro, accelerometer and magnetometer values separately
 
-#if PLUTO_USE_DCM
-float mag_final[3], gyro[3], acc_final[3];
+#if PLUTO_USE_DCM && PLUTO_USE_MAGNETOMETER && PLUTO_USE_IMU
+float mag_final[3], imu_data[6];
 
 float calc_gyro_rate(int16_t raw, float sens){
   float tmp = (float)raw;
@@ -40,10 +33,7 @@ static msg_t Update(void *arg) {
 			start = halGetCounterValue() ;
 			first = 0 ;
 		}
-		readIMUData(ACCEL_DATA, acc_final) ; /* Reads values from the accelerometer */
-		chThdSleepMilliseconds(10) ;
-
-		readIMUData(GYRO_DATA, gyro) ; /* Reads values from the gyroscope */
+		readAllIMUData(imu_data) ; /* Reads values from the accelerometer and gyroscope */
 		chThdSleepMilliseconds(10) ;
 
 		magGetScaledData(mag_final) ; /* Reads values from the magnetometer */
@@ -52,7 +42,7 @@ static msg_t Update(void *arg) {
 		interval = convertCounterToMilliseconds(start, end) / 1000.0f ;
 		start = end ;
 
-		dcmUpdate(dcmMatrix, acc_final[0], acc_final[1], acc_final[2], gyro[0], gyro[1], gyro[2], mag_final[0], mag_final[1], mag_final[2], interval);
+		dcmUpdate(dcmMatrix, imu_data[0], imu_data[1], imu_data[2], imu_data[3], imu_data[4], imu_data[5], mag_final[0], mag_final[1], mag_final[2], interval);
 
 		if(dcmMatrix[2][2] >= 0) {
 			pitch = -asinf(dcmMatrix[2][0]) ;
@@ -79,4 +69,4 @@ static msg_t Update(void *arg) {
 void startDCMThread(BaseSequentialStream *bss){
 	chThdCreateStatic(waUpdate, sizeof(waUpdate), HIGHPRIO, Update, bss);
 }
-#endif	/*PLUTO_USE_DCM */
+#endif	/*PLUTO_USE_DCM && PLUTO_USE_MAGNETOMETER && PLUTO_USE_IMU */

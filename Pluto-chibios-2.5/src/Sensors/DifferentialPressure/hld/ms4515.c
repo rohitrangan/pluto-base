@@ -5,17 +5,13 @@
  *      Author: sapan
  */
 
-#include "ch.h"
-#include "hal.h"
-#include "ms4515.h"
-#include "chprintf.h"
-#include "plutoconf.h"
+#include "pluto.h"
 
+#if PLUTO_USE_DIFFP
 uint8_t MS4515_rxbuf[20], MS4515_txbuf[20], MS4515_status = 0;
 int16_t dp_raw = 0, dT_raw = 0;
 
 void read_ms4515(void){
-
 	//float Differential_pressure = 0
 	float Temperature_MS4515 = 0;
 //	chprintf((BaseSequentialStream *)&OUTPUT, "Inside Diff open drain mode and  pressure measurement address new %x \r\n", MS4515_addr);
@@ -33,5 +29,5 @@ void read_ms4515(void){
 	Temperature_MS4515 = ((200*dT_raw)/2047) - 50;
 
 	chprintf((BaseSequentialStream *)&OUTPUT,"MS4515 raw bytes output  %x , %x , %x , %x, %d , %d , %d \r\n", MS4515_rxbuf[0], MS4515_rxbuf[1], MS4515_rxbuf[2],MS4515_rxbuf[3], dp_raw, dT_raw, Temperature_MS4515);
-
 }
+#endif	/*PLUTO_USE_DIFFP */

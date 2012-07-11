@@ -1,16 +1,13 @@
 /*
- * hmc5883.c
+ * HMC5883.c
  *
  *  Created on: Apr 26, 2012
  *      Author: sapan
  */
-#include "ch.h"
-#include "hal.h"
-#include "hmc5883.h"
-#include "chprintf.h"
+#include "pluto.h"
 
-uint8_t hmc_txbuf[20], hmc_rxbuf[20] ;
-float hmc_range = 0.0 ;
+#if PLUTO_USE_MAGNETOMETER
+MagData MD1 ;
 
 /*
  * average = No. of samples to be average per measurement
@@ -20,52 +17,52 @@ float hmc_range = 0.0 ;
  * OP_Mode = Continuous, Single measurement or Idle mode
  */
 
-void initialize_HMC(uint8_t average, uint8_t ODR, uint8_t Mode, uint8_t Gain, uint8_t OP_Mode) {
-	hmc_txbuf[1] = 0x00;
-	/*Put Address of CONFIG_A in hmc_txbuf[0] */
-	hmc_txbuf[0] = CONFIG_A;
+void initialize_HMC(MagData *magd, MagConfig *magcfg) {
+	uint8_t hmc_txbuf[2], hmc_rxbuf[1] ;
+	hmc_txbuf[0] = CONFIG_A ;
+	hmc_txbuf[1] = 0x00 ;
 	/*Set value for CONFIG_A register */
-	hmc_txbuf[1] |= average;
-	hmc_txbuf[1] = hmc_txbuf[1] << 5;
-	hmc_txbuf[1] |= (ODR << 2);
-	hmc_txbuf[1] |= Mode;
+	hmc_txbuf[1] |= magcfg->SAMPLE_AVG ;
+	hmc_txbuf[1] = hmc_txbuf[1] << 5 ;
+	hmc_txbuf[1] |= (magcfg->ODR << 2) ;
+	hmc_txbuf[1] |= magcfg->MODE ;
 	i2cAcquireBus(&I2C_HMC) ;
-	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0);
+	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0) ;
 	i2cReleaseBus(&I2C_HMC) ;
 
-	hmc_txbuf[1] = 0x00;
-	/*Put Address of CONFIG_B in hmc_txbuf[0] */
-	hmc_txbuf[0] = CONFIG_B;
+	hmc_txbuf[0] = CONFIG_B ;
+	hmc_txbuf[1] = 0x00 ;
 	/*Set value for CONFIG_B register */
-	hmc_txbuf[1] |= (Gain << 5);
+	hmc_txbuf[1] |= (magcfg->RANGE << 5) ;
 	i2cAcquireBus(&I2C_HMC) ;
-	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0);
+	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0) ;
 	i2cReleaseBus(&I2C_HMC) ;
 
-	hmc_txbuf[1] = 0x00;
 	/*Put Address of MODE register in hmc_txbuf[0] */
-	hmc_txbuf[0] = MODE;
+	hmc_txbuf[0] = OP_MODE ;
 	/*Set value for MODE register */
-	hmc_txbuf[1] = OP_Mode;
+	hmc_txbuf[1] = magcfg->MEASUREMENT_MODE ;
 	i2cAcquireBus(&I2C_HMC) ;
-	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0);
+	i2cMasterTransmit(&I2C_HMC, HMC_ADDR, hmc_txbuf, 2, hmc_rxbuf, 0) ;
 	i2cReleaseBus(&I2C_HMC) ;
 
-	if(Gain == 0)
-		hmc_range = 0.73;
-	if(Gain == 1)
-		hmc_range = 0.92;
-	if(Gain == 2)
-		hmc_range = 1.22;
-	if(Gain == 3)
-		hmc_range = 1.52;
-	if(Gain == 4)
-		hmc_range = 2.27;
-	if(Gain == 5)
-		hmc_range = 2.56;
-	if(Gain == 6)
-		hmc_range = 3.03;
-	if(Gain == 7)
-		hmc_range = 4.35;
+	if(magcfg->RANGE == 0)
+		magd->RANGE = 0.73 ;
+	if(magcfg->RANGE == 1)
+		magd->RANGE = 0.92 ;
+	if(magcfg->RANGE == 2)
+		magd->RANGE = 1.22 ;
+	if(magcfg->RANGE == 3)
+		magd->RANGE = 1.52 ;
+	if(magcfg->RANGE == 4)
+		magd->RANGE = 2.27 ;
+	if(magcfg->RANGE == 5)
+		magd->RANGE = 2.56 ;
+	if(magcfg->RANGE == 6)
+		magd->RANGE = 3.03 ;
+	if(magcfg->RANGE == 7)
+		magd->RANGE = 4.35 ;
 
+	magcfg->MEASUREMENT_MODE = magd->MEASUREMENT_MODE ;
 }
+#endif	/*PLUTO_USE_MAGNETOMETER */

@@ -5,18 +5,7 @@
  *different drivers like I2C, SPI and USART.
  */
 
-#include "plutoconf.h"
-#include "ch.h"
-#include "hal.h"
-#include "ff.h"
-#include "chprintf.h"
-
-#include "plutoInit.h"
-#include "hmc5883.h"
-#include "BMP180.h"
-#include "MPU60X0.h"
-#include "ms4515.h"
-#include "PWMInit.h"
+#include "pluto.h"
 
 /*Config for USART1 */
 static const SerialConfig usartOP = {
@@ -128,23 +117,31 @@ void I2CInitialize(void) {
 	i2cStart(&I2CD1, &i2cfg1) ;
 
 	/*To Link PB8 and PB9 to I2C1 function */
-	palSetPadMode(GPIOB, 8,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;// | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP);// | PAL_STM32_OTYPE_OPENDRAIN);
-	palSetPadMode(GPIOB, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;//PAL_STM32_OTYPE_OPENDRAINN);// | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_PUDR_PULLUP);// | PAL_STM32_OTYPE_OPENDRAIN);
-
+	palSetPadMode(GPIOB, 8,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
+	palSetPadMode(GPIOB, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
 	chThdSleepMilliseconds(10) ;
 #if PLUTO_USE_SCANNER
 	i2cScanner(&I2CD1, "I2C1") ;
 #endif	/*PLUTO_USE_SCANNER */
-	set_mpu_i2c() ;
+
+#endif	/*PLUTO_USE_IMU */
+
+}
+
+void SensorInitialize(Sensors *sensor) {
+
+#if PLUTO_USE_IMU
+	set_mpu60X0(sensor->imudata, sensor->imucfg) ;
+	chThdSleepMilliseconds(10) ;
 #endif	/*PLUTO_USE_IMU */
 
 #if PLUTO_USE_MAGNETOMETER
-	initialize_HMC(AVERAGE4, ODR6, MODE_NORMAL, RANGE_880mGa, OP_MODE_SINGLE) ;
+	initialize_HMC(sensor->magdata, sensor->magcfg) ;
 	chThdSleepMilliseconds(10) ;
 #endif	/*PLUTO_USE_MAGNETOMETER*/
 
 #if PLUTO_USE_BAROMETER
-	initialize_bmp180(ULTRA_HIGH_RESOLUTION) ;
+	initialize_bmp180(sensor->barodata, sensor->barocfg) ;
 	chThdSleepMilliseconds(10) ;
 #endif	/*PLUTO_USE_BAROMETER */
 

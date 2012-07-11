@@ -7,13 +7,7 @@
 
 #include <math.h>
 
-#include "ch.h"
-#include "hal.h"
-#include "chprintf.h"
-#include "plutoconf.h"
-
-#include "dcm.h"
-#include "vector3d.h"
+#include "pluto.h"
 
 #if PLUTO_USE_DCM
 /*
@@ -47,12 +41,6 @@ Output variables are:
 
 /*
  ******************************************************************************
- * EXTERNS
- ******************************************************************************
- */
-
-/*
- ******************************************************************************
  * GLOBAL VARIABLES
  ******************************************************************************
  */
@@ -65,6 +53,8 @@ static float accweight = 0;
 
 /* magnetometer data weight relative to gyro's weight of 1. */
 static float magweight = 0;
+
+static uint32_t imu_step = 0;
 
 /*
  *******************************************************************************
@@ -128,7 +118,6 @@ void dcm_rotate(float dcm[3][3], float w[3]){
 void dcmUpdate(float dcmEst[3][3], float xacc, float yacc, float zacc, float xgyro, float ygyro, float zgyro, float xmag, float ymag, float zmag, float imu_interval)
 {
   uint32_t i;
-  uint32_t imu_step = 0;                /* incremented on each call to imu_update */
   float Kacc[3];  //K(b) vector according to accelerometer in body's coordinates
   float Imag[3];  //I(b) vector accordng to magnetometer in body's coordinates
   accweight = 0.01 ;

@@ -6,19 +6,17 @@
  */
 #include<math.h>
 
-#include "IMUData.h"
-#include "MPU60X0.h"
-#include "vector3d.h"
+#include "pluto.h"
 
+#if PLUTO_USE_IMU
 /*If Mode is ACCEL_DATA then the accelerometer values
  *are read, mode is GYRO_DATA then gyrometer values
  *are read, if mode is TEMP_DATA then the temperature
  *value is read. val stores the values of the sensor
  *data.
  */
-void readIMUData(uint8_t mode, float val[3]) {
+void readIMUData(uint8_t mode, IMUData *imudata) {
 	uint8_t txbuf[1], rxbuf[6], i ;
-	int16_t tmp[3] ;
 	msg_t status = RDY_OK ;
 
 	for(i = 0 ; i < 6 ; i++)
@@ -33,13 +31,13 @@ void readIMUData(uint8_t mode, float val[3]) {
 				  	  	  	  if(status != RDY_OK)
 				  	  	  		  return ;
 
-				  	  	  	  tmp[0] = (rxbuf[0] << 8) + rxbuf[1] ;
-				  	  	  	  tmp[1] = (rxbuf[2] << 8) + rxbuf[3] ;
-				  	  	  	  tmp[2] = (rxbuf[4] << 8) + rxbuf[5] ;
+				  	  	  	  imudata->RAW_ACCEL_X = (rxbuf[0] << 8) + rxbuf[1] ;
+				  	  	  	  imudata->RAW_ACCEL_Y = (rxbuf[2] << 8) + rxbuf[3] ;
+				  	  	  	  imudata->RAW_ACCEL_Z = (rxbuf[4] << 8) + rxbuf[5] ;
 
-				  	  	  	  val[0] = (float)tmp[0] / ACCEL_XSENS ;
-				  	  	      val[1] = (float)tmp[1] / ACCEL_YSENS ;
-				  	  	      val[2] = (float)tmp[2] / ACCEL_ZSENS ;
+				  	  	  	  imudata->ACCEL_X = (float)imudata->RAW_ACCEL_X / imudata->ACCEL_SENS ;
+				  	  	      imudata->ACCEL_Y = (float)imudata->RAW_ACCEL_Y / imudata->ACCEL_SENS ;
+				  	  	      imudata->ACCEL_Z = (float)imudata->RAW_ACCEL_Z / imudata->ACCEL_SENS ;
 				  	  	  	  break ;
 
 		case GYRO_DATA  	: txbuf[0] = GYRO_XOUT_H ;
@@ -50,13 +48,13 @@ void readIMUData(uint8_t mode, float val[3]) {
 				  	  	  	  if(status != RDY_OK)
 				  	  	  		  return ;
 
-				  	  	  	  tmp[0] = (rxbuf[0] << 8) + rxbuf[1] ;
-				  	  	      tmp[1] = (rxbuf[2] << 8) + rxbuf[3] ;
-				  	  	  	  tmp[2] = (rxbuf[4] << 8) + rxbuf[5] ;
+				  	  	  	  imudata->RAW_GYRO_X = (rxbuf[0] << 8) + rxbuf[1] ;
+				  	  	      imudata->RAW_GYRO_Y = (rxbuf[2] << 8) + rxbuf[3] ;
+				  	  	  	  imudata->RAW_GYRO_Z = (rxbuf[4] << 8) + rxbuf[5] ;
 
-				  	  	  	  val[0] = ((float)tmp[0] / GYRO_XSENS) * (M_PI / 180.0) ;
-				  	  	      val[1] = ((float)tmp[1] / GYRO_YSENS) * (M_PI / 180.0) ;
-				  	  	      val[2] = ((float)tmp[2] / GYRO_ZSENS) * (M_PI / 180.0) ;
+				  	  	  	  imudata->GYRO_X = ((float)imudata->RAW_GYRO_X / imudata->GYRO_SENS) * (M_PI / 180.0) ;
+				  	  	      imudata->GYRO_Y = ((float)imudata->RAW_GYRO_Y / imudata->GYRO_SENS) * (M_PI / 180.0) ;
+				  	  	      imudata->GYRO_Z = ((float)imudata->RAW_GYRO_Z / imudata->GYRO_SENS) * (M_PI / 180.0) ;
 				  	  	  	  break ;
 
 		case IMU_TEMP_DATA  : txbuf[0] = TEMP_OUT_H ;
@@ -67,12 +65,43 @@ void readIMUData(uint8_t mode, float val[3]) {
 		  	  	  	  	  	  if(status != RDY_OK)
 		  	  	  	  	  		  return ;
 
-		  	  	  	  	  	  tmp[0] = (rxbuf[0] << 8) + rxbuf[1] ;
-		  	  	  	  	  	  val[0] = (float)tmp[0] ;
+		  	  	  	  	  	  imudata->RAW_TEMP = (rxbuf[0] << 8) + rxbuf[1] ;
 		  	  	  	  	  	  break ;
 
 		default 	   	   : return ;
 	}
+}
+
+/*To read all the accelerometer and gyrometer values
+ *at the same time for calculating attitude.
+ *USE THIS FUNCTION ONLY WHEN ATTITUDE CALCULATION IS
+ *REQUIRED.
+ */
+void readAllIMUData(IMUData *imudata) {
+	uint8_t txbuf[1], rxbuf[14] ;
+	msg_t status = RDY_OK ;
+
+	txbuf[0] = ACCEL_XOUT_H ;
+	i2cAcquireBus(&I2C_MPU) ;
+	status = i2cMasterTransmit(&I2C_MPU, MPU_ADDR, txbuf, 1, rxbuf, 14) ;
+	i2cReleaseBus(&I2C_MPU) ;
+
+	if(status != RDY_OK)
+		return ;
+
+	imudata->RAW_ACCEL_X = (rxbuf[0] << 8 ) + rxbuf[1]  ;
+	imudata->RAW_ACCEL_Y = (rxbuf[2] << 8 ) + rxbuf[3]  ;
+	imudata->RAW_ACCEL_Z = (rxbuf[4] << 8 ) + rxbuf[5]  ;
+	imudata->RAW_GYRO_X  = (rxbuf[8] << 8 ) + rxbuf[9]  ;
+	imudata->RAW_GYRO_Y  = (rxbuf[10] << 8) + rxbuf[11] ;
+	imudata->RAW_GYRO_Z  = (rxbuf[12] << 8) + rxbuf[13] ;
+
+	imudata->ACCEL_X = (float)imudata->RAW_ACCEL_X / imudata->ACCEL_SENS ;
+	imudata->ACCEL_Y = (float)imudata->RAW_ACCEL_Y / imudata->ACCEL_SENS ;
+	imudata->ACCEL_Z = (float)imudata->RAW_ACCEL_Z / imudata->ACCEL_SENS ;
+	imudata->GYRO_X  = ((float)imudata->RAW_GYRO_X / imudata->GYRO_SENS) * (M_PI / 180.0) ;
+	imudata->GYRO_Y  = ((float)imudata->RAW_GYRO_Y / imudata->GYRO_SENS) * (M_PI / 180.0) ;
+	imudata->GYRO_Z  = ((float)imudata->RAW_GYRO_Z / imudata->GYRO_SENS) * (M_PI / 180.0) ;
 }
 
 /*This function calculates the pitch, roll and
@@ -82,18 +111,26 @@ void readIMUData(uint8_t mode, float val[3]) {
  *
  *TODO rohitrangan Merge Gyro Data.
  */
-void eulerAngles(float angles[3]) {
-	float acc[3] ;
-	readIMUData(ACCEL_DATA, acc) ;
-	vector3d_normalize(acc) ;
+void eulerAngles(IMUData *imudata, float angles[3]) {
+	readIMUData(ACCEL_DATA, imudata) ;
 
-	angles[0] = asinf((-1.0f *acc[0])) ;
+	angles[0] = asinf((-1.0f *imudata->ACCEL_X)) ;
 	angles[0] *= 180.0 ;
 	angles[0] /= M_PI ;
 
-	angles[1] = atanf((acc[1] / acc[2])) ;
+	angles[1] = atanf((imudata->ACCEL_Y / imudata->ACCEL_Z)) ;
 	angles[1] *= 180.0 ;
 	angles[1] /= M_PI ;
 
 	angles[2] = 0.0 ;
 }
+
+void displayCoeffs(void) {
+	chprintf((BaseSequentialStream *)&OUTPUT, "Gyro X a:- %f ", GYRO_X_A) ;
+	chprintf((BaseSequentialStream *)&OUTPUT, "Gyro X b:- %f ", GYRO_X_B) ;
+	chprintf((BaseSequentialStream *)&OUTPUT, "Gyro Y a:- %f ", GYRO_Y_A) ;
+	chprintf((BaseSequentialStream *)&OUTPUT, "Gyro Y b:- %f ", GYRO_Y_B) ;
+	chprintf((BaseSequentialStream *)&OUTPUT, "Gyro Z a:- %f ", GYRO_Z_A) ;
+	chprintf((BaseSequentialStream *)&OUTPUT, "Gyro Z b:- %f\r\n", GYRO_Z_B) ;
+}
+#endif	/*PLUTO_USE_IMU */

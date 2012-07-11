@@ -4,12 +4,13 @@
  *  Created on: May 1, 2012
  *      Author: sapan
  */
-#include "ch.h"
-#include "hal.h"
+
+#include "plutoconf.h"
 
 #ifndef MPU60X0_H_
 #define MPU60X0_H_
 
+#if PLUTO_USE_IMU
 #define I2C_MPU 			I2CD1
 #define MPU_INT_PORT		GPIOC
 #define MPU_INT_PIN			0
@@ -333,6 +334,34 @@
 #define CLKSEL_32Khz		4		/* PLL with external 32.768 kHz reference */
 #define CLKSEL_19MHz		5		/* PLL with external 19.2MHzreference */
 
-void set_mpu_i2c(void) ;	//Added by rohitrangan on 30-05-2012
+typedef struct {
+	uint8_t GYRO_FS_SEL ;
+	uint8_t ACCEL_FS_SEL ;
+	uint8_t SAMPLE_RATE_DIV ;
+}IMUConfig ;
+
+typedef struct {
+	float ACCEL_X ;
+	float ACCEL_Y ;
+	float ACCEL_Z ;
+	float GYRO_X  ;
+	float GYRO_Y  ;
+	float GYRO_Z  ;
+	float ACCEL_SENS ;
+	float GYRO_SENS  ;
+	int16_t RAW_ACCEL_X ;
+	int16_t RAW_ACCEL_Y ;
+	int16_t RAW_ACCEL_Z ;
+	int16_t RAW_GYRO_X  ;
+	int16_t RAW_GYRO_Y  ;
+	int16_t RAW_GYRO_Z  ;
+	int16_t RAW_TEMP ;
+}IMUData ;
+
+extern IMUData IMUD1 ;
+
+extern float reg_coeffs[12] ;
+void set_mpu60X0(IMUData *imudat, IMUConfig *imucfg) ;
+#endif	/*PLUTO_USE_IMU */
 
 #endif /* MPU60X0_H_ */

@@ -6,7 +6,7 @@
  */
 /* 18-06-2012 - Riya Ray - The functions fpuTest and cmd_fputest have been added */
 
-#include "plutoconf.h"
+#include "pluto.h"
 
 #ifndef SHELLCOMMANDS_H_
 #define SHELLCOMMANDS_H_
@@ -53,6 +53,10 @@ void cmd_barometer(BaseSequentialStream *bss, int argc, char *argv[]);
 #if HAL_USE_PWM
 void cmd_pwm(BaseSequentialStream *bss, int argc, char *argv[]);
 #endif	/*HAL_USE_PWM */
+
+#if HAL_USE_ICU
+void cmd_icu(BaseSequentialStream *bss, int argc, char *argv[]);
+#endif	/*HAL_USE_ICU */
 
 #endif	/*PLUTO_USE_SHELL */
 

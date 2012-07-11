@@ -7,14 +7,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "plutoconf.h"
 
-#include "ch.h"
-#include "hal.h"
-#include "ff.h"
-#include "fsInit.h"
-#include "chprintf.h"
-#include "plutoInit.h"
+#include "pluto.h"
 
 #if PLUTO_USE_FATFS
 /**

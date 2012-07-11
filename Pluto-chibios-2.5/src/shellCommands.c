@@ -4,24 +4,11 @@
  *This file contains all the shell commands and shell
  *structures required to start the PLUTO shell.
  */
-/* 18-06-2012 - Riya Ray - The functions fpuTest and cmd_fputest have been added */
 
 #include<stdlib.h>
 #include<string.h>
-#include "plutoconf.h"
 
-#include "ch.h"
-#include "ff.h"
-#include "hal.h"
-#include "shell.h"
-#include "chprintf.h"
-
-#include "fsInit.h"
-#include "IMUData.h"
-#include "PWMEnable.h"
-#include "shellCommands.h"
-#include "BarometerData.h"
-#include "MagnetometerData.h"
+#include "pluto.h"
 
 #if PLUTO_USE_SHELL
 const ShellCommand commands[] = {
@@ -48,6 +35,9 @@ const ShellCommand commands[] = {
 #if HAL_USE_PWM
   {"pwm", cmd_pwm},
 #endif	/*HAL_USE_PWM */
+#if HAL_USE_ICU
+  {"icu", cmd_icu},
+#endif	/*HAL_USE_ICU */
   {NULL, NULL}
 };
 
@@ -209,7 +199,6 @@ void cmd_clear(BaseSequentialStream *bss, int argc, char *argv[]) {
 void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
 
   uint8_t i ;
-  float data[3] ;
 
   if(argc != 1) {
 	  chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
@@ -222,33 +211,33 @@ void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
   }
   if((!strcasecmp("--temp", argv[0])) || (!strcasecmp("-t", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
-      readIMUData(IMU_TEMP_DATA, data) ;
-      chprintf(bss, "Temperature Sensor Value:- %f\r\n", data[0]) ;
+      readIMUData(IMU_TEMP_DATA, &IMUD1) ;
+      chprintf(bss, "Temperature Sensor Value:- %d\r\n", IMUD1.RAW_TEMP) ;
       chThdSleepMilliseconds(100) ;
     }
   }
   else if((!strcasecmp("--accel", argv[0])) || (!strcasecmp("-a", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
-      readIMUData(ACCEL_DATA, data) ;
-      chprintf(bss, "Accelerometer Value:- %f g ", data[0]) ;
-      chprintf(bss, " %f g ", data[1]) ;
-      chprintf(bss, " %f g\r\n", data[2]) ;
+      readIMUData(ACCEL_DATA, &IMUD1) ;
+      chprintf(bss, "Accelerometer Value:- %f g ", IMUD1.ACCEL_X) ;
+      chprintf(bss, " %f g ", IMUD1.ACCEL_Y) ;
+      chprintf(bss, " %d g\r\n", IMUD1.RAW_ACCEL_Z) ;
       chThdSleepMilliseconds(100) ;
     }
   }
   else if((!strcasecmp("--gyro", argv[0])) || (!strcasecmp("-g", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
-      readIMUData(GYRO_DATA, data) ;
-      chprintf(bss, "Gyrometer Value:- %f rad/s", data[0]) ;
-      chprintf(bss, " %f rad/s ", data[1]) ;
-      chprintf(bss, " %f rad/s\r\n", data[2]) ;
+      readIMUData(GYRO_DATA, &IMUD1) ;
+      chprintf(bss, "Gyrometer Value:- %f rad/s", IMUD1.GYRO_X) ;
+      chprintf(bss, " %f rad/s ", IMUD1.GYRO_Y) ;
+      chprintf(bss, " %f rad/s\r\n", IMUD1.GYRO_Z) ;
       chThdSleepMilliseconds(100) ;
     }
   }
   else if((!strcasecmp("--angle", argv[0])) || (!strcasecmp("-n", argv[0]))) {
     float angles[3] ;
     for(i = 0 ; i < 50 ; i++) {
-      eulerAngles(angles) ;
+      eulerAngles(&IMUD1, angles) ;
       chprintf(bss, "Angles Value:- %f", angles[0]) ;
       chprintf(bss, " %f", angles[1]) ;
       chprintf(bss, " %f\r\n", angles[2]) ;
@@ -278,7 +267,6 @@ void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
 #if PLUTO_USE_MAGNETOMETER
 void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
 
-  int16_t data[3] ;
   uint8_t i ;
 
   if(argc != 1) {
@@ -291,29 +279,30 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
   }
   if((!strcasecmp(argv[0], "--raw")) || (!strcasecmp(argv[0], "-r"))) {
     for(i = 0 ; i < 50 ; i++) {
-      readMagnetometerData(data) ;
-      chprintf(bss, "Magnetometer Value:- %d %d %d\r\n", data[0], data[1], data[2]) ;
+      readMagnetometerData(&MD1) ;
+      chprintf(bss, "Magnetometer Value:- %d %d %d\r\n", MD1.RAW_MAG_X, MD1.RAW_MAG_Y, MD1.RAW_MAG_Z) ;
       chThdSleepMilliseconds(100) ;
     }
   }
   else if((!strcasecmp(argv[0], "--tesla")) || (!strcasecmp(argv[0], "-t"))) {
     for(i = 0 ; i < 50 ; i++) {
-      float dat[3] ;
-      magGetScaledData(dat) ;
-      chprintf(bss, "Magnetometer Value:- %f uT", dat[0]) ;
-      chprintf(bss, " %f uT", dat[1]) ;
-      chprintf(bss, " %f uT\r\n", dat[2]) ;
+      readMagnetometerData(&MD1) ;
+      chprintf(bss, "Magnetometer Value:- %f uT", MD1.MAG_X) ;
+      chprintf(bss, " %f uT", MD1.MAG_Y) ;
+      chprintf(bss, " %f uT\r\n", MD1.MAG_Z) ;
       chThdSleepMilliseconds(100) ;
     }
   }
+#if PLUTO_USE_IMU
   else if((!strcasecmp(argv[0], "--head")) || (!strcasecmp(argv[0], "-a"))) {
 	float heading ;
     for(i = 0 ; i < 50 ; i++) {
-    	heading = getHeading() ;
+    	heading = getHeading(&IMUD1, &MD1) ;
     	chprintf(bss, "Heading :- %f\r\n", heading) ;
     	chThdSleepMilliseconds(100) ;
     }
   }
+#endif	/*PLUTO_USE_IMU */
   else if((!strcasecmp(argv[0], "--help")) || (!strcasecmp(argv[0], "-h"))) {
     chprintf(bss, "Usage: magnetometer [options]\r\nOptions:\r\n") ;
     chprintf(bss, " --help \t| -h\tDisplay this help.\r\n") ;
@@ -349,18 +338,20 @@ void cmd_barometer(BaseSequentialStream *bss, int argc, char *argv[]) {
   }
   if((!strcasecmp("--temp", argv[0])) || (!strcasecmp("-t", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
-      chprintf(bss, "Temperature Value:- %f C\r\n", readBarometerData(BARO_TEMP_DATA)) ;
+      readBarometerData(&BD1, BARO_TEMP_DATA) ;
+      chprintf(bss, "Temperature Value:- %f C\r\n", BD1.TEMP) ;
     }
   }
   else if((!strcasecmp("--press", argv[0])) || (!strcasecmp("-p", argv[0]))) {
     for(i = 0 ; i < 50 ; i++) {
-      chprintf(bss, "Pressure Value:- %f", readBarometerData(BARO_PRESSURE_DATA)) ;
+      readBarometerData(&BD1, BARO_PRESSURE_DATA) ;
+      chprintf(bss, "Pressure Value:- %f", BD1.PRESSURE) ;
       chprintf(bss, " Pa\r\n") ;
     }
   }
   else if((!strcasecmp("--alt", argv[0])) || (!strcasecmp("-a", argv[0]))) {
 	for(i = 0 ; i < 50 ; i++) {
-      chprintf(bss, "Altitude:- %f m\r\n", getAltitude()) ;
+      chprintf(bss, "Altitude:- %f m\r\n", getAltitude(&BD1)) ;
     }
   }
   else if((!strcasecmp("--help", argv[0])) || (!strcasecmp("-h", argv[0]))) {
@@ -447,5 +438,12 @@ void cmd_pwm(BaseSequentialStream *bss, int argc, char *argv[]) {
 
 }
 #endif	/*HAL_USE_PWM */
+
+#if HAL_USE_ICU
+void cmd_icu(BaseSequentialStream *bss, int argc, char *argv[]) {
+  (void)argc ; (void)argv ;
+  chprintf(bss, "Last width:- %d, Last period:- %d\r\n", last_width[0], last_period[0]) ;
+}
+#endif	/*HAL_USE_ICU */
 
 #endif  /*PLUTO_USE_SHELL */

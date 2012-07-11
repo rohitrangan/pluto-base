@@ -2,7 +2,6 @@
  *Created On - 02-06-2012
  *
  *PLUTO Features can be enabled and disabled in this file.
- *TODO rohitrangan Incorporate other sensors of PLUTO here.
  */
 
 #ifndef PLUTOCONF_H_
@@ -24,7 +23,7 @@
 #define PLUTO_USE_DIFFP				FALSE
 
 /*To use the shell for carrying out commands (DO NOT DISABLE) */
-#define PLUTO_USE_SHELL				FALSE
+#define PLUTO_USE_SHELL				TRUE
 
 /*To list all the Sensors on board for debugging.(Default should be FALSE) */
 #define PLUTO_USE_SCANNER			FALSE
@@ -32,8 +31,11 @@
 /*To check whether the onboard FPU works */
 #define PLUTO_USE_FPUTEST			FALSE
 
+/*To calibrate the IMU */
+#define PLUTO_CALIBRATE_IMU			FALSE
+
 /*To use DCM to calculate the altitude */
-#define PLUTO_USE_DCM				TRUE
+#define PLUTO_USE_DCM				FALSE
 
 /*Serial Driver for Output. */
 #define OUTPUT						SD1
