@@ -7,7 +7,7 @@
 
 #include "pluto.h"
 
-/*Config for USART1 */
+/*Config for USART */
 static const SerialConfig usartOP = {
     115200,
     0,
@@ -85,11 +85,16 @@ void i2cScanner(I2CDriver *FindI2C, const char *driverName) {
 }
 #endif /*PLUTO_USE_SCANNER */
 
-/*Initializes SerialDriver1 */
+/*Initializes SerialDriver for Output */
 void OUTPUTInit(void) {
-	sdStart(&OUTPUT, &usartOP);
-	palSetPadMode(GPIOB, 6, PAL_MODE_ALTERNATE(7));
-	palSetPadMode(GPIOB, 7, PAL_MODE_ALTERNATE(7));
+	sdStart(&OUTPUT, &usartOP) ;
+#if PLUTO_USE_ZIGBEE
+	palSetPadMode(GPIOC, 12, PAL_MODE_ALTERNATE(8)) ;
+	palSetPadMode(GPIOD, 2 , PAL_MODE_ALTERNATE(8)) ;
+#else
+	palSetPadMode(GPIOB, 6, PAL_MODE_ALTERNATE(7)) ;
+	palSetPadMode(GPIOB, 7, PAL_MODE_ALTERNATE(7)) ;
+#endif	/*PLUTO_USE_ZIGBEE */
 }
 
 /*Initializes I2C Drivers 1 and 3 */
@@ -130,13 +135,16 @@ void I2CInitialize(void) {
 
 void SensorInitialize(Sensors *sensor) {
 
+#if !PLUTO_USE_IMU && !PLUTO_USE_MAGNETOMETER && !PLUTO_USE_BAROMETER
+	(void)sensor ;
+#endif	/*!PLUTO_USE_IMU && !PLUTO_USE_MAGNETOMETER && !PLUTO_USE_BAROMETER */
 #if PLUTO_USE_IMU
-	set_mpu60X0(sensor->imudata, sensor->imucfg) ;
+	set_mpu60X0(sensor->imudata, &sensor->imucfg) ;
 	chThdSleepMilliseconds(10) ;
 #endif	/*PLUTO_USE_IMU */
 
 #if PLUTO_USE_MAGNETOMETER
-	initialize_HMC(sensor->magdata, sensor->magcfg) ;
+	initialize_HMC(sensor->magdata, &sensor->magcfg) ;
 	chThdSleepMilliseconds(10) ;
 #endif	/*PLUTO_USE_MAGNETOMETER*/
 

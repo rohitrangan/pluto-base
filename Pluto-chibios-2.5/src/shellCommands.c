@@ -198,7 +198,7 @@ void cmd_clear(BaseSequentialStream *bss, int argc, char *argv[]) {
 #if PLUTO_USE_IMU
 void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
 
-  uint8_t i ;
+  uint16_t i ;
 
   if(argc != 1) {
 	  chprintf(bss, "Usage: imu [options]\r\nOptions:\r\n") ;
@@ -221,7 +221,7 @@ void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
       readIMUData(ACCEL_DATA, &IMUD1) ;
       chprintf(bss, "Accelerometer Value:- %f g ", IMUD1.ACCEL_X) ;
       chprintf(bss, " %f g ", IMUD1.ACCEL_Y) ;
-      chprintf(bss, " %d g\r\n", IMUD1.RAW_ACCEL_Z) ;
+      chprintf(bss, " %fg\r\n", IMUD1.ACCEL_Z) ;
       chThdSleepMilliseconds(100) ;
     }
   }
@@ -267,7 +267,7 @@ void cmd_imu(BaseSequentialStream *bss, int argc, char *argv[]) {
 #if PLUTO_USE_MAGNETOMETER
 void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
 
-  uint8_t i ;
+  uint16_t i ;
 
   if(argc != 1) {
     chprintf(bss, "Usage: magnetometer [options]\r\nOptions:\r\n") ;
@@ -326,7 +326,7 @@ void cmd_magnetometer(BaseSequentialStream *bss, int argc, char *argv[]) {
 #if PLUTO_USE_BAROMETER
 void cmd_barometer(BaseSequentialStream *bss, int argc, char *argv[]) {
 
-  uint8_t i ;
+  uint16_t i ;
 
   if(argc != 1) {
     chprintf(bss, "Usage: barometer [options]\r\nOptions:\r\n") ;

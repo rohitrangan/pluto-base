@@ -31,7 +31,7 @@
 #define SERVO6_PORT			GPIOB
 #define SERVO6_PIN			0
 
-#define PWM_CLK_FREQUENCY			100000 /* Clock Frequency of PWM Timer. Higher Frequency better resolution. 100000 = 0.1MHz */
+#define PWM_CLK_FREQUENCY			1000000 /* Clock Frequency of PWM Timer. Higher Frequency better resolution. 100000 = 0.1MHz */
 #define PWM_PERIOD					20000	/* Time Period of PWM Cycle. 20000 = 20 ms with PWM_Clock_Frequency = 0.1 MHz */
 
 /*The channels on which the PWM output will be found.

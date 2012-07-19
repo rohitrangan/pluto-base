@@ -29,25 +29,31 @@ int main(void) {
 	chThdSleepMilliseconds(10) ;
 	chprintf((BaseSequentialStream *)&OUTPUT, "\r\nInitializing...\r\n") ;
 #if PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
-	IMUConfig imucfg1 = {
-		FS_SEL_250,
-		AFS_SEL_2g,
-		0x09
-	};
-	MagConfig magcfg1 = {
-		AVERAGE4,
-		ODR6,
-		MODE_NORMAL,
-		RANGE_880mGa,
-		OP_MODE_SINGLE
-	};
 	Sensors init = {
-		&imucfg1,
+#if PLUTO_USE_IMU
+		{
+			FS_SEL_250,
+			AFS_SEL_2g,
+			0x09
+		},
 		&IMUD1,
-		&magcfg1,
+#endif	/*PLUTO_USE_IMU */
+
+#if PLUTO_USE_MAGNETOMETER
+		{
+			AVERAGE4,
+			ODR6,
+			MODE_NORMAL,
+			RANGE_880mGa,
+			OP_MODE_SINGLE
+		},
 		&MD1,
+#endif	/*PLUTO_USE_MAGNETOMETER */
+
+#if PLUTO_USE_BAROMETER
 		ULTRA_HIGH_RESOLUTION,
 		&BD1
+#endif	/*PLUTO_USE_BAROMETER*/
 	};
 	I2CInitialize() ;
 	chThdSleepMilliseconds(10) ;
@@ -55,13 +61,14 @@ int main(void) {
 	chThdSleepMilliseconds(10) ;
 #endif	/*PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER */
 
-#if HAL_USE_ICU
-	icuInit() ;
+#if PLUTO_USE_RC
+	initInput() ;
 	chThdSleepMilliseconds(10) ;
 #endif	/*HAL_USE_ICU */
 
 #if HAL_USE_PWM
 	initPWM() ;
+	startPWMThread() ;
 	chThdSleepMilliseconds(10) ;
 #endif	/*HAL_USE_PWM */
 
@@ -81,6 +88,9 @@ int main(void) {
 	startDCMThread((BaseSequentialStream *)&OUTPUT) ;
 #endif	/*PLUTO_USE_DCM */
 	while (TRUE) {
+		chSysLockFromIsr() ;
+		printValues() ;
+		chSysUnlockFromIsr() ;
 #if PLUTO_USE_SHELL
 		if (!shelltp)
 			shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO) ;

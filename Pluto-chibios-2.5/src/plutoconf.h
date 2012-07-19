@@ -11,19 +11,19 @@
 #define PLUTO_USE_FATFS 			FALSE
 
 /*To use the onboard IMU */
-#define PLUTO_USE_IMU				TRUE
+#define PLUTO_USE_IMU				FALSE
 
 /*To use the onboard barometer */
-#define PLUTO_USE_BAROMETER			TRUE
+#define PLUTO_USE_BAROMETER			FALSE
 
 /*To use the onboard magnetometer */
-#define PLUTO_USE_MAGNETOMETER		TRUE
+#define PLUTO_USE_MAGNETOMETER		FALSE
 
 /*To use the onboard pressure transducer */
 #define PLUTO_USE_DIFFP				FALSE
 
 /*To use the shell for carrying out commands (DO NOT DISABLE) */
-#define PLUTO_USE_SHELL				TRUE
+#define PLUTO_USE_SHELL				FALSE
 
 /*To list all the Sensors on board for debugging.(Default should be FALSE) */
 #define PLUTO_USE_SCANNER			FALSE
@@ -37,7 +37,17 @@
 /*To use DCM to calculate the altitude */
 #define PLUTO_USE_DCM				FALSE
 
-/*Serial Driver for Output. */
-#define OUTPUT						SD1
+/*To use the RC Controller for input */
+#define PLUTO_USE_RC				TRUE
 
-#endif /* PLUTOCONF_H_ */
+/*To use the ZigBee protocol for serial communication */
+#define PLUTO_USE_ZIGBEE			FALSE
+
+#if PLUTO_USE_ZIGBEE
+/*Serial Driver for Output. */
+#define OUTPUT						SD5
+#else
+#define OUTPUT						SD1
+#endif	/*PLUTO_USE_ZIGBEE*/
+
+#endif	/* PLUTOCONF_H_ */

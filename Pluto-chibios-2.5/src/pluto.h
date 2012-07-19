@@ -19,8 +19,8 @@
 #include "dcm.h"
 #include "utils.h"
 #include "fsInit.h"
+#include "RCInput.h"
 #include "PWMInit.h"
-#include "ICUInit.h"
 #include "IMUData.h"
 #include "vector3d.h"
 #include "Calibrate.h"
@@ -32,13 +32,22 @@
 #include "MagnetometerData.h"
 
 typedef struct {
-	IMUConfig 	*imucfg   ;
-	IMUData 	*imudata  ;
-	MagConfig 	*magcfg   ;
-	MagData 	*magdata  ;
-	uint8_t 	barocfg   ;
+#if PLUTO_USE_IMU
+	IMUConfig 	imucfg   ;
+	IMUData 	*imudata ;
+#endif	/*PLUTO_USE_IMU */
+
+#if PLUTO_USE_MAGNETOMETER
+	MagConfig 	magcfg   ;
+	MagData 	*magdata ;
+#endif	/*PLUTO_USE_MAGNETOMETER*/
+
+#if PLUTO_USE_BAROMETER
+	uint8_t 	barocfg  ;
 	BaroData 	*barodata ;
+#endif	/*PLUTO_USE_BAROMETER */
 }Sensors;
+
 /*Only done as MMC needs this */
 #if PLUTO_USE_FATFS
 extern const SPIConfig ls_spicfg ;
@@ -49,7 +58,7 @@ extern const SPIConfig hs_spicfg ;
 void SPI2Init(void) ;
 #endif	/*PLUTO_USE_FATFS */
 
-#if PLUTO_USE_MAGNETOMETER | PLUTO_USE_BAROMETER | PLUTO_USE_IMU
+#if PLUTO_USE_MAGNETOMETER || PLUTO_USE_BAROMETER || PLUTO_USE_IMU
 /*Initializes I2C Drivers 1 and 3 */
 void I2CInitialize(void) ;
 
