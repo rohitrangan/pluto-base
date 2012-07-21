@@ -186,11 +186,9 @@ void printValues(void) {
  *and so on.
  */
 void InputValues(float input[4]) {
-	chSysLockFromIsr() ;
-	input[0] = RCInput[0] ;
-	input[1] = RCInput[1] ;
-	input[2] = RCInput[2] ;
-	input[3] = RCInput[3] ;
-	chSysUnlockFromIsr() ;
+	input[0] = RCInput[0] * 1000.0f ;
+	input[1] = RCInput[1] * 1000.0f ;
+	input[2] = RCInput[2] * 1000.0f ;
+	input[3] = RCInput[3] * 1000.0f ;
 }
 #endif	/*PLUTO_USE_RC */

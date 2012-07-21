@@ -120,6 +120,7 @@ void initPWM(void){
 	palSetPadMode(SERVO1_PORT, SERVO1_PIN, PAL_MODE_ALTERNATE(2)) ;
 	palSetPadMode(SERVO5_PORT, SERVO5_PIN, PAL_MODE_ALTERNATE(2)) ;
 	palSetPadMode(SERVO6_PORT, SERVO6_PIN, PAL_MODE_ALTERNATE(2)) ;
+	chThdSleepMilliseconds(10) ;
 #endif	/*STM32_PWM_USE_TIM3 */
 	/*
 	 * Start PWM8 function associated with Timer 8.

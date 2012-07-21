@@ -43,12 +43,21 @@
  *SERVO5 --> Channel 4
  *SERVO6 --> Channel 3
  */
+#define SERVO1_CH		1
+#define SERVO2_CH		2
+#define SERVO3_CH		2
+#define SERVO4_CH		3
+#define SERVO5_CH		3
+#define SERVO6_CH		2
+
+/*The definitions for the servos for giving the PWM output.
+ */
 #define SERVO1		1
 #define SERVO2		2
-#define SERVO3		2
-#define SERVO4		3
-#define SERVO5		3
-#define SERVO6		2
+#define SERVO3		3
+#define SERVO4		4
+#define SERVO5		5
+#define SERVO6		6
 
 void initPWM(void) ;
 

@@ -68,7 +68,6 @@ int main(void) {
 
 #if HAL_USE_PWM
 	initPWM() ;
-	startPWMThread() ;
 	chThdSleepMilliseconds(10) ;
 #endif	/*HAL_USE_PWM */
 
@@ -87,9 +86,14 @@ int main(void) {
 #if PLUTO_USE_DCM
 	startDCMThread((BaseSequentialStream *)&OUTPUT) ;
 #endif	/*PLUTO_USE_DCM */
-	while (TRUE) {
+	while(TRUE) {
+		float rcinp[4] ;
 		chSysLockFromIsr() ;
-		printValues() ;
+		InputValues(rcinp) ;
+		startServo(SERVO2, (uint32_t)rcinp[2]) ;
+		startServo(SERVO4, (uint32_t)rcinp[2]) ;
+		startServo(SERVO5, (uint32_t)rcinp[2]) ;
+		startServo(SERVO6, (uint32_t)rcinp[2]) ;
 		chSysUnlockFromIsr() ;
 #if PLUTO_USE_SHELL
 		if (!shelltp)

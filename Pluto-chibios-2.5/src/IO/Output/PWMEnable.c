@@ -43,32 +43,32 @@ void startPWMThread(void) {
 void startServo(int servo, uint32_t wid) {
 	switch(servo) {
 #if STM32_PWM_USE_TIM3
-		case 1  : pwmEnableChannelI(&PWMD3, SERVO1, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, wid)) ;
+		case SERVO1  : pwmEnableChannelI(&PWMD3, SERVO1_CH, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, wid)) ;
 				  break ;
 #endif	/*STM32_PWM_USE_TIM3 */
 
 #if STM32_PWM_USE_TIM1
-		case 2  : pwmEnableChannelI(&PWMD1, SERVO2, PWM_FRACTION_TO_WIDTH(&PWMD1, PWM_PERIOD, wid)) ;
+		case SERVO2  : pwmEnableChannelI(&PWMD1, SERVO2_CH, PWM_FRACTION_TO_WIDTH(&PWMD1, PWM_PERIOD, wid)) ;
 				  break ;
 #endif	/*STM32_PWM_USE_TIM1 */
 
 #if STM32_PWM_USE_TIM8
-		case 3  : pwmEnableChannelI(&PWMD8, SERVO3, PWM_FRACTION_TO_WIDTH(&PWMD8, PWM_PERIOD, wid)) ;
+		case SERVO3  : pwmEnableChannelI(&PWMD8, SERVO3_CH, PWM_FRACTION_TO_WIDTH(&PWMD8, PWM_PERIOD, wid)) ;
 				  break ;
 #endif	/*STM32_PWM_USE_TIM8 */
 
 #if STM32_PWM_USE_TIM2
-		case 4  : pwmEnableChannelI(&PWMD2, SERVO4, PWM_FRACTION_TO_WIDTH(&PWMD2, PWM_PERIOD, wid)) ;
+		case SERVO4  : pwmEnableChannelI(&PWMD2, SERVO4_CH, PWM_FRACTION_TO_WIDTH(&PWMD2, PWM_PERIOD, wid)) ;
 				  break ;
 #endif	/*STM32_PWM_USE_TIM2 */
 
 #if STM32_PWM_USE_TIM3
-		case 5  : pwmEnableChannelI(&PWMD3, SERVO5, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, wid)) ;
+		case SERVO5  : pwmEnableChannelI(&PWMD3, SERVO5_CH, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, wid)) ;
 				  break ;
 #endif	/*STM32_PWM_USE_TIM3 */
 
 #if STM32_PWM_USE_TIM3
-		case 6  : pwmEnableChannelI(&PWMD3, SERVO6, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, wid)) ;
+		case SERVO6  : pwmEnableChannelI(&PWMD3, SERVO6_CH, PWM_FRACTION_TO_WIDTH(&PWMD3, PWM_PERIOD, wid)) ;
 				  break ;
 #endif /*STM32_PWM_USE_TIM3 */
 		default : return ;
@@ -81,32 +81,32 @@ void startServo(int servo, uint32_t wid) {
 void stopServo(int servo) {
 	switch(servo) {
 #if STM32_PWM_USE_TIM3
-		case 1  : pwmDisableChannelI(&PWMD3, SERVO1) ;
+		case SERVO1  : pwmDisableChannelI(&PWMD3, SERVO1_CH) ;
 				  break ;
 #endif /*STM32_PWM_USE_TIM3 */
 
 #if STM32_PWM_USE_TIM1
-		case 2  : pwmDisableChannelI(&PWMD1, SERVO2) ;
+		case SERVO2  : pwmDisableChannelI(&PWMD1, SERVO2_CH) ;
 				  break ;
 #endif /*#if STM32_PWM_USE_TIM1 */
 
 #if STM32_PWM_USE_TIM8
-		case 3  : pwmDisableChannelI(&PWMD8, SERVO3) ;
+		case SERVO3  : pwmDisableChannelI(&PWMD8, SERVO3_CH) ;
 				  break ;
 #endif /*STM32_PWM_USE_TIM8 */
 
 #if STM32_PWM_USE_TIM2
-		case 4  : pwmDisableChannelI(&PWMD2, SERVO4) ;
+		case SERVO4  : pwmDisableChannelI(&PWMD2, SERVO4_CH) ;
 				  break ;
 #endif /*STM32_PWM_USE_TIM2*/
 
 #if STM32_PWM_USE_TIM3
-		case 5  : pwmDisableChannelI(&PWMD3, SERVO5) ;
+		case SERVO5  : pwmDisableChannelI(&PWMD3, SERVO5_CH) ;
 				  break ;
 #endif	/*STM32_PWM_USE_TIM3 */
 
 #if STM32_PWM_USE_TIM3
-		case 6  : pwmDisableChannelI(&PWMD3, SERVO6) ;
+		case SERVO6  : pwmDisableChannelI(&PWMD3, SERVO6_CH) ;
 				  break ;
 #endif	/*STM32_PWM_USE_TIM3 */
 		default : return ;
