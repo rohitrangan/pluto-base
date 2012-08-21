@@ -42,9 +42,9 @@ void readIMUData(uint8_t mode, IMUData *imudata) {
 				  	  	  	  imudata->RAW_ACCEL_Y = (rxbuf[2] << 8) + rxbuf[3] ;
 				  	  	  	  imudata->RAW_ACCEL_Z = (rxbuf[4] << 8) + rxbuf[5] ;
 
-				  	  	  	  imudata->ACCEL_X = (float)imudata->RAW_ACCEL_X / imudata->ACCEL_SENS ;
+				  	  	  	  imudata->ACCEL_X = - (float)imudata->RAW_ACCEL_X / imudata->ACCEL_SENS ; // rrangan as the direction on the device is on the reverse side.
 				  	  	      imudata->ACCEL_Y = (float)imudata->RAW_ACCEL_Y / imudata->ACCEL_SENS ;
-				  	  	      imudata->ACCEL_Z = (float)imudata->RAW_ACCEL_Z / imudata->ACCEL_SENS ;
+				  	  	      imudata->ACCEL_Z = - (float)imudata->RAW_ACCEL_Z / imudata->ACCEL_SENS ; // rrangan as the direction on the device is on the reverse side.
 				  	  	  	  break ;
 
 		case GYRO_DATA  	: txbuf[0] = GYRO_XOUT_H ;
@@ -59,9 +59,9 @@ void readIMUData(uint8_t mode, IMUData *imudata) {
 				  	  	      imudata->RAW_GYRO_Y = (rxbuf[2] << 8) + rxbuf[3] ;
 				  	  	  	  imudata->RAW_GYRO_Z = (rxbuf[4] << 8) + rxbuf[5] ;
 
-				  	  	  	  imudata->GYRO_X = ((float)imudata->RAW_GYRO_X / imudata->GYRO_SENS) * (M_PI / 180.0) ;
+				  	  	  	  imudata->GYRO_X = - ((float)imudata->RAW_GYRO_X / imudata->GYRO_SENS) * (M_PI / 180.0) ; // rrangan as the direction on the device is on the reverse side.
 				  	  	      imudata->GYRO_Y = ((float)imudata->RAW_GYRO_Y / imudata->GYRO_SENS) * (M_PI / 180.0) ;
-				  	  	      imudata->GYRO_Z = ((float)imudata->RAW_GYRO_Z / imudata->GYRO_SENS) * (M_PI / 180.0) ;
+				  	  	      imudata->GYRO_Z = - ((float)imudata->RAW_GYRO_Z / imudata->GYRO_SENS) * (M_PI / 180.0) ; // rrangan as the direction on the device is on the reverse side.
 				  	  	  	  break ;
 
 		case IMU_TEMP_DATA  : txbuf[0] = TEMP_OUT_H ;
@@ -103,12 +103,12 @@ void readAllIMUData(IMUData *imudata) {
 	imudata->RAW_GYRO_Y  = (rxbuf[10] << 8) + rxbuf[11] ;
 	imudata->RAW_GYRO_Z  = (rxbuf[12] << 8) + rxbuf[13] ;
 
-	imudata->ACCEL_X = (float)imudata->RAW_ACCEL_X / imudata->ACCEL_SENS ;
+	imudata->ACCEL_X = - (float)imudata->RAW_ACCEL_X / imudata->ACCEL_SENS ; // rrangan as the direction on the device is on the reverse side.
 	imudata->ACCEL_Y = (float)imudata->RAW_ACCEL_Y / imudata->ACCEL_SENS ;
-	imudata->ACCEL_Z = (float)imudata->RAW_ACCEL_Z / imudata->ACCEL_SENS ;
-	imudata->GYRO_X  = ((float)imudata->RAW_GYRO_X / imudata->GYRO_SENS) * (M_PI / 180.0) ;
+	imudata->ACCEL_Z = - (float)imudata->RAW_ACCEL_Z / imudata->ACCEL_SENS ; // rrangan as the direction on the device is on the reverse side.
+	imudata->GYRO_X  = - ((float)imudata->RAW_GYRO_X / imudata->GYRO_SENS) * (M_PI / 180.0) ; // rrangan as the direction on the device is on the reverse side.
 	imudata->GYRO_Y  = ((float)imudata->RAW_GYRO_Y / imudata->GYRO_SENS) * (M_PI / 180.0) ;
-	imudata->GYRO_Z  = ((float)imudata->RAW_GYRO_Z / imudata->GYRO_SENS) * (M_PI / 180.0) ;
+	imudata->GYRO_Z  = - ((float)imudata->RAW_GYRO_Z / imudata->GYRO_SENS) * (M_PI / 180.0) ; // rrangan as the direction on the device is on the reverse side.
 }
 
 /*This function calculates the pitch, roll and

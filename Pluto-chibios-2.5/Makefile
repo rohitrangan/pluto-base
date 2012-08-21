@@ -99,7 +99,8 @@ CSRC = $(PORTSRC) \
        src/shellCommands.c \
        src/floatingPoint.c \
        src/utils.c \
-       src/main.c
+       src/main.c \
+       src/control.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

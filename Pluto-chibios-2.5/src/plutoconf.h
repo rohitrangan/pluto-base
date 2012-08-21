@@ -17,7 +17,7 @@
 #define PLUTO_USE_BAROMETER			TRUE
 
 /*To use the onboard magnetometer */
-#define PLUTO_USE_MAGNETOMETER		        TRUE
+#define PLUTO_USE_MAGNETOMETER      TRUE
 
 /*To use the onboard pressure transducer */
 #define PLUTO_USE_DIFFP				FALSE
