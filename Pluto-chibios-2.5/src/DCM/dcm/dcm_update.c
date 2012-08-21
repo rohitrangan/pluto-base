@@ -51,6 +51,7 @@ static msg_t Update(void *arg) {
 		roll  = (180 * roll ) / M_PI ;
 		yaw   = (180 * yaw  ) / M_PI ;
 
+        //TODO - rrangan - put this in ifdef and make a command of it.
 		chprintf((BaseSequentialStream *)arg, "Interval:- %f ms ", (interval * 1000.0f)) ;
 		chprintf((BaseSequentialStream *)arg, "Pitch : %f\t\t", pitch) ;
 		chprintf((BaseSequentialStream *)arg, "Roll  : %f\t\t", roll ) ;

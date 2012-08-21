@@ -8,16 +8,16 @@
 #define PLUTOCONF_H_
 
 /*For using MicroSD Card with a FAT filesystem */
-#define PLUTO_USE_FATFS 			FALSE
+#define PLUTO_USE_FATFS 			TRUE
 
 /*To use the onboard IMU */
-#define PLUTO_USE_IMU				FALSE
+#define PLUTO_USE_IMU				TRUE
 
 /*To use the onboard barometer */
-#define PLUTO_USE_BAROMETER			FALSE
+#define PLUTO_USE_BAROMETER			TRUE
 
 /*To use the onboard magnetometer */
-#define PLUTO_USE_MAGNETOMETER		FALSE
+#define PLUTO_USE_MAGNETOMETER		        TRUE
 
 /*To use the onboard pressure transducer */
 #define PLUTO_USE_DIFFP				FALSE
@@ -35,19 +35,12 @@
 #define PLUTO_CALIBRATE_IMU			FALSE
 
 /*To use DCM to calculate the altitude */
-#define PLUTO_USE_DCM				FALSE
+#define PLUTO_USE_DCM				TRUE
 
 /*To use the RC Controller for input */
 #define PLUTO_USE_RC				TRUE
 
 /*To use the ZigBee protocol for serial communication */
-#define PLUTO_USE_ZIGBEE			FALSE
-
-#if PLUTO_USE_ZIGBEE
-/*Serial Driver for Output. */
-#define OUTPUT						SD5
-#else
-#define OUTPUT						SD1
-#endif	/*PLUTO_USE_ZIGBEE*/
+#define PLUTO_USE_ZIGBEE			TRUE
 
 #endif	/* PLUTOCONF_H_ */

@@ -6,6 +6,12 @@
  */
 
 #include "pluto.h"
+#if PLUTO_USE_ZIGBEE
+/* Serial Driver for Output. */
+#define OUTPUT					SD5
+#else
+#define OUTPUT					SD1
+#endif /* PLUTO_USE_ZIGBEE*/
 
 #if PLUTO_USE_RC
 #define RC_IN_RANGE(x) ((x >= 0.9) && (x <= 2.3))

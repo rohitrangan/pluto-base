@@ -9,6 +9,12 @@
 #include<string.h>
 
 #include "pluto.h"
+#if PLUTO_USE_ZIGBEE
+/* Serial Driver for Output. */
+#define OUTPUT					SD5
+#else
+#define OUTPUT					SD1
+#endif /* PLUTO_USE_ZIGBEE*/
 
 #if PLUTO_USE_SHELL
 const ShellCommand commands[] = {

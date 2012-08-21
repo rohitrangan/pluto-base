@@ -53,7 +53,7 @@ FRESULT scan_files(BaseSequentialStream *bss, char *path) {
       if(fno.fattrib & AM_DIR) {
         path[i++] = '/';
         strcpy(&path[i], fn);
-        //sprintf(&path[i], "/%s", fn);
+        sprintf(&path[i], "/%s", fn);
         res = scan_files(bss, path);
         if(res != FR_OK)
           break;
