@@ -72,4 +72,7 @@ void i2cScanner(I2CDriver *FindI2C, const char *driverName) ;
 /*Initializes SerialDriver1 for Output and Input */
 void OUTPUTInit(void) ;
 
+/* PID function for controlling output to motors */
+void control(BaseSequentialStream* bss);
+
 #endif /* PLUTO_H_ */

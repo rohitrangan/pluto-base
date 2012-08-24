@@ -96,11 +96,11 @@ CSRC = $(PORTSRC) \
        $(DCMSRC) \
        src/fsInit.c \
        src/pluto.c \
+       src/control.c \
        src/shellCommands.c \
        src/floatingPoint.c \
        src/utils.c \
-       src/main.c \
-       src/control.c
+       src/main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
