@@ -10,6 +10,19 @@
 
 #include "pluto.h"
 
+extern float kpi[3];
+extern float kii[3];
+extern float kpo[3];
+extern float kio[3];
+extern current_attitude_struct current_attitude; /* declared in dcm_update.c */
+
+#if PLUTO_USE_ZIGBEE
+/* Serial Driver for Output. */
+#define OUTPUT					SD5
+#else
+#define OUTPUT					SD1
+#endif /* PLUTO_USE_ZIGBEE*/
+
 #if PLUTO_USE_SHELL
 const ShellCommand commands[] = {
   {"mem", cmd_mem},
@@ -38,6 +51,13 @@ const ShellCommand commands[] = {
 #if HAL_USE_ICU
   {"icu", cmd_icu},
 #endif	/*HAL_USE_ICU */
+#if PLUTO_USE_DCM
+  {"attitude", cmd_attitude}, /* print current attitude roll, pitch, yaw number of times */
+  {"set_gain_kpi", cmd_set_gain_kpi}, /* proportional gain inner loop roll, pitch, yaw */
+  {"set_gain_kii", cmd_set_gain_kii}, /* integral gain inner loop roll, pitch, yaw */
+  {"set_gain_kpo", cmd_set_gain_kpo}, /* proportional gain outer loop roll, pitch, yaw */
+  {"set_gain_kio", cmd_set_gain_kio}, /* integral gain outer loop roll, pitch, yaw */
+#endif /* PLUTO_USE_DCM */
   {NULL, NULL}
 };
 
@@ -445,5 +465,67 @@ void cmd_icu(BaseSequentialStream *bss, int argc, char *argv[]) {
   chprintf(bss, "Last width:- %d, Last period:- %d\r\n", last_width[0], last_period[0]) ;
 }
 #endif	/*HAL_USE_ICU */
+
+#if PLUTO_USE_DCM
+/* print current attitude roll, pitch, yaw number of times */
+void cmd_attitude(BaseSequentialStream *bss, int argc, char *argv[]) {
+  if(argc < 1) {
+    chprintf(bss, "Usage: number of times attitude needs to be printed\r\n If a second argument is given it changes the default sleep between 2 prints from 100 ms\r\n") ;
+  }
+  int sleep_time = 100; /* default millisecond value */
+  if(argc == 2) {
+    sleep_time = atoi(argv[1]);
+  }
+  int i;
+  for(i = 0; i < atoi(argv[0]); i++){
+	chprintf(bss, "Timestamp  : %d   ", current_attitude.timestamp);
+    chprintf(bss, "Roll  : %f   ", current_attitude.attitude[0]);
+    chprintf(bss, "Pitch : %f   ", current_attitude.attitude[1]);
+    chprintf(bss, "Yaw   : %f\r\n", current_attitude.attitude[2]);
+
+    chThdSleepMilliseconds(sleep_time); /* TODO take this sleep time as the second argument */
+  }
+}
+
+/* proportional gain inner loop roll, pitch, yaw */
+void cmd_set_gain_kpi(BaseSequentialStream *bss, int argc, char *argv[]) {
+  if(argc < 3) {
+	chprintf(bss, "Usage: kpi roll-gain pitch-gain yaw-gain in float\r\n") ;
+  }
+  kpi[0] = atof(argv[0]);
+  kpi[1] = atof(argv[1]);
+  kpi[2] = atof(argv[2]);
+}
+
+/* integral gain inner loop roll, pitch, yaw */
+void cmd_set_gain_kii(BaseSequentialStream *bss, int argc, char *argv[]) {
+  if(argc < 3) {
+    chprintf(bss, "Usage: kii roll-gain pitch-gain yaw-gain in float\r\n") ;
+  }
+  kii[0] = atof(argv[0]);
+  kii[1] = atof(argv[1]);
+  kii[2] = atof(argv[2]);
+}
+
+/* proportional gain outer loop roll, pitch, yaw */
+void cmd_set_gain_kpo(BaseSequentialStream *bss, int argc, char *argv[]) {
+  if(argc < 3) {
+    chprintf(bss, "Usage: kpo roll-gain pitch-gain yaw-gain in float\r\n") ;
+  }
+  kpo[0] = atof(argv[0]);
+  kpo[1] = atof(argv[1]);
+  kpo[2] = atof(argv[2]);
+}
+
+/* integral gain outer loop roll, pitch, yaw */
+void cmd_set_gain_kio(BaseSequentialStream *bss, int argc, char *argv[]) {
+  if(argc < 3) {
+    chprintf(bss, "Usage: kio roll-gain pitch-gain yaw-gain in float\r\n") ;
+  }
+  kio[0] = atof(argv[0]);
+  kio[1] = atof(argv[1]);
+  kio[2] = atof(argv[2]);
+}
+#endif /* PLUTO_USE_DCM */
 
 #endif  /*PLUTO_USE_SHELL */

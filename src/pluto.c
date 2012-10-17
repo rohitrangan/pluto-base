@@ -7,6 +7,13 @@
 
 #include "pluto.h"
 
+#if PLUTO_USE_ZIGBEE
+/* Serial Driver for Output. */
+#define OUTPUT					SD5
+#else
+#define OUTPUT					SD1
+#endif /* PLUTO_USE_ZIGBEE*/
+
 /*Config for USART */
 static const SerialConfig usartOP = {
     115200,
@@ -87,25 +94,24 @@ void i2cScanner(I2CDriver *FindI2C, const char *driverName) {
 
 /*Initializes SerialDriver for Output */
 void OUTPUTInit(void) {
-	sdStart(&OUTPUT, &usartOP) ;
 #if PLUTO_USE_ZIGBEE
 	palSetPadMode(GPIOC, 12, PAL_MODE_ALTERNATE(8)) ;
 	palSetPadMode(GPIOD, 2 , PAL_MODE_ALTERNATE(8)) ;
 #else
 	palSetPadMode(GPIOB, 6, PAL_MODE_ALTERNATE(7)) ;
 	palSetPadMode(GPIOB, 7, PAL_MODE_ALTERNATE(7)) ;
-#endif	/*PLUTO_USE_ZIGBEE */
+#endif /* PLUTO_USE_ZIGBEE */
+    sdStart(&OUTPUT, &usartOP) ;
 }
 
 /*Initializes I2C Drivers 1 and 3 */
 void I2CInitialize(void) {
 
 #if PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
-	i2cStart(&I2CD3, &i2cfg3) ;
-
 	/*To Link PA8 and PC9 to I2C3 function */
 	palSetPadMode(GPIOA, 8,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
 	palSetPadMode(GPIOC, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
+	i2cStart(&I2CD3, &i2cfg3) ;
 
 	chThdSleepMilliseconds(10) ;
 #if PLUTO_USE_SCANNER
@@ -119,11 +125,11 @@ void I2CInitialize(void) {
 #endif	/*PLUTO_USE_MAGNETOMETER */
 
 #if PLUTO_USE_IMU
-	i2cStart(&I2CD1, &i2cfg1) ;
-
 	/*To Link PB8 and PB9 to I2C1 function */
 	palSetPadMode(GPIOB, 8,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
 	palSetPadMode(GPIOB, 9,  PAL_MODE_ALTERNATE(4) | PAL_STM32_OTYPE_OPENDRAIN) ;
+	i2cStart(&I2CD1, &i2cfg1) ;
+
 	chThdSleepMilliseconds(10) ;
 #if PLUTO_USE_SCANNER
 	i2cScanner(&I2CD1, "I2C1") ;

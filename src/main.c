@@ -5,6 +5,12 @@
  */
 
 #include "pluto.h"
+#if PLUTO_USE_ZIGBEE
+/* Serial Driver for Output. */
+#define OUTPUT					SD5
+#else
+#define OUTPUT					SD1
+#endif /* PLUTO_USE_ZIGBEE*/
 
 /*
  * Application entry point.
@@ -26,7 +32,11 @@ int main(void) {
 	 * Activates the SerialDriver for Output and I2C Drivers.
 	 */
 	OUTPUTInit() ;
+#if PLUTO_USE_ZIGBEE
+	chThdSleepMilliseconds(500) ; /* needs more time for Zigbee handshake */ /*TODO move these hard coded values to header file */
+#else
 	chThdSleepMilliseconds(10) ;
+#endif
 	chprintf((BaseSequentialStream *)&OUTPUT, "\r\nInitializing...\r\n") ;
 #if PLUTO_USE_IMU || PLUTO_USE_BAROMETER || PLUTO_USE_MAGNETOMETER
 	Sensors init = {
@@ -87,14 +97,15 @@ int main(void) {
 	startDCMThread((BaseSequentialStream *)&OUTPUT) ;
 #endif	/*PLUTO_USE_DCM */
 	while(TRUE) {
+		control((BaseSequentialStream *)&OUTPUT);
+		/*
 		float rcinp[4] ;
-		chSysLockFromIsr() ;
 		InputValues(rcinp) ;
 		startServo(SERVO2, (uint32_t)rcinp[2]) ;
 		startServo(SERVO4, (uint32_t)rcinp[2]) ;
 		startServo(SERVO5, (uint32_t)rcinp[2]) ;
 		startServo(SERVO6, (uint32_t)rcinp[2]) ;
-		chSysUnlockFromIsr() ;
+		*/
 #if PLUTO_USE_SHELL
 		if (!shelltp)
 			shelltp = shellCreate(&shell_cfg1, SHELL_WA_SIZE, NORMALPRIO) ;
